@@ -1,16 +1,14 @@
-{{/* Version picker reads /versions.json at runtime and switches between /<version>/current-page */}}
-<select id="version-select" class="version-select" aria-label="Select version"></select>
 <script>
 (function() {
-  var sel = document.getElementById('version-select');
   var baseURL = {{ .Site.BaseURL }};
-  // Strip trailing slash and version segment to get site root
   var root = baseURL.replace(/\/[^/]*\/?$/, '');
 
   fetch(root + '/versions.json')
     .then(function(r) { return r.json(); })
     .then(function(versions) {
-      // Current path relative to version root
+      var sel = document.createElement('select');
+      sel.className = 'version-select';
+      sel.setAttribute('aria-label', 'Select version');
       var path = window.location.pathname.replace(baseURL.replace(/^https?:\/\/[^/]+/, ''), '');
       sel.innerHTML = versions.map(function(v) {
         var tag = (typeof v === 'string') ? v : v.tag;
@@ -22,7 +20,9 @@
       sel.addEventListener('change', function() {
         window.location.href = root + '/' + sel.value + '/' + path;
       });
+      var target = document.querySelector('.logo-switches');
+      if (target) target.appendChild(sel);
     })
-    .catch(function() { sel.style.display = 'none'; });
+    .catch(function() {});
 })();
 </script>

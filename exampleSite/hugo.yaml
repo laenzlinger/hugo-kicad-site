@@ -1,4 +1,3 @@
-# baseURL is set by CI: e.g. https://pedalboard.github.io/pedalboard-hw/v4.0.0/
 baseURL: https://pedalboard.github.io/pedalboard-hw/latest/
 languageCode: en-us
 title: Open Pedalboard — Mainboard
@@ -11,25 +10,32 @@ params:
   projectName: "Open Pedalboard — Mainboard"
   description: "Open-source KiCad mainboard for guitar pedalboards"
   repoURL: "https://github.com/pedalboard/pedalboard-hw"
-
-  # KiCad files (for KiCanvas viewer)
   schematicFile: "pedalboard-hw.kicad_sch"
   pcbFile: "pedalboard-hw.kicad_pcb"
-
-  # Set by CI at build time — git tag or "main"
-  version: "main"
-
-  # OSHWA certification
+  kicadDir: ""
+  navigatePage: "Browse/pedalboard-hw-navigate.html"
   oshwaID: "CH000023"
-
-  # BOM supplier links
   digikeyURL: "https://www.digikey.ch/de/mylists/list/DJ3I9KG222"
-
-  # Fabrication links
   pcbwayURL: "https://www.pcbway.com/project/shareproject/..."
-
-  # Set by CI — list of 3D render filenames for this version
+  version: "main"
   renders: []
-
-  # Set by CI — list of {name, path} download entries for this version
   downloads: []
+  kicadFiles: []
+  # PaperMod params
+  env: production
+  showBreadCrumbs: true
+  socialIcons:
+    - name: github
+      url: "https://github.com/pedalboard/pedalboard-hw"
+
+menu:
+  main:
+    - name: Schematic
+      url: /schematic/
+      weight: 20
+    - name: Gallery
+      url: /gallery/
+      weight: 30
+    - name: Downloads
+      url: /downloads/
+      weight: 40
