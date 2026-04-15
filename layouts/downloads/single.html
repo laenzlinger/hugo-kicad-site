@@ -1,16 +1,21 @@
 {{ define "main" }}
-<article>
+<article class="post-single">
   <h1>{{ .Title }}</h1>
   {{ .Content }}
-  {{ $downloads := .Site.Params.downloads }}
-  {{ with $downloads }}
-  <ul class="download-list">
-    {{ range . }}
-    <li><a href="{{ $.Site.BaseURL }}{{ .path }}">{{ .name }}</a></li>
+  {{ $version := .Site.Params.version | default "main" }}
+  {{ $isRelease := and (ne $version "main") (ne $version "latest") }}
+  {{ if $isRelease }}
+    {{ $downloads := .Site.Params.downloads }}
+    {{ with $downloads }}
+    <ul class="download-list">
+      {{ range . }}
+      <li><a href="{{ $.Site.BaseURL }}{{ .path }}">{{ .name }}</a></li>
+      {{ end }}
+    </ul>
     {{ end }}
-  </ul>
   {{ else }}
-  <p>No downloads available for this version.</p>
+    <p>Downloads are available for released versions only.</p>
+    {{ with .Site.Params.repoURL }}<p><a href="{{ . }}/releases">→ View releases on GitHub</a></p>{{ end }}
   {{ end }}
 </article>
 {{ end }}
