@@ -9,18 +9,20 @@
   {{ $sch := site.Params.schematicFile }}
   {{ $pcb := site.Params.pcbFile }}
   {{ $prefix := cond (eq $dir "") "" (printf "%s/" $dir) }}
+  {{ $schURL := printf "https://kicanvas.org/?github=%s/blob/%s/%s%s" $repo $ref $prefix $sch }}
+  {{ $pcbURL := printf "https://kicanvas.org/?github=%s/blob/%s/%s%s" $repo $ref $prefix $pcb }}
   <div class="kicanvas-tabs">
-    {{ with $sch }}<button class="tab active" onclick="loadKiCanvas('{{ $repo }}/blob/{{ $ref }}/{{ $prefix }}{{ . }}')">Schematic</button>{{ end }}
-    {{ with $pcb }}<button class="tab" onclick="loadKiCanvas('{{ $repo }}/blob/{{ $ref }}/{{ $prefix }}{{ . }}')">PCB</button>{{ end }}
+    {{ with $sch }}<button class="tab active" onclick="loadKiCanvas('{{ $schURL }}')">Schematic</button>{{ end }}
+    {{ with $pcb }}<button class="tab" onclick="loadKiCanvas('{{ $pcbURL }}')">PCB</button>{{ end }}
   </div>
   <iframe id="kicanvas-frame" width="100%" height="600" frameborder="0" loading="lazy"
-    {{ with $sch }}src="https://kicanvas.org/?github={{ $repo }}/blob/{{ $ref }}/{{ $prefix }}{{ . }}"{{ end }}>
+    {{ with $sch }}src="{{ $schURL | safeURL }}"{{ end }}>
   </iframe>
   <script>
-  function loadKiCanvas(ghPath) {
+  function loadKiCanvas(url) {
     document.querySelectorAll('.kicanvas-tabs .tab').forEach(function(t) { t.classList.remove('active'); });
     event.target.classList.add('active');
-    document.getElementById('kicanvas-frame').src = 'https://kicanvas.org/?github=' + ghPath;
+    document.getElementById('kicanvas-frame').src = url;
   }
   </script>
   {{ end }}
