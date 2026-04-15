@@ -1,0 +1,29 @@
+{{ define "main" }}
+<article>
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+  {{ with .Site.Params.repoURL }}
+  <div class="kicanvas-tabs">
+    {{ with site.Params.schematicFile }}<button class="tab active" data-type="sch">Schematic</button>{{ end }}
+    {{ with site.Params.pcbFile }}<button class="tab" data-type="pcb">PCB</button>{{ end }}
+  </div>
+  <iframe id="kicanvas-frame" width="100%" height="600" frameborder="0" loading="lazy"
+    src="https://kicanvas.org/?github={{ . }}/tree/{{ site.Params.version | default "main" }}">
+  </iframe>
+  <script>
+  (function() {
+    var repo = {{ . }};
+    var ref = {{ site.Params.version | default "main" }};
+    document.querySelectorAll('.kicanvas-tabs .tab').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.kicanvas-tabs .tab').forEach(function(t) { t.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById('kicanvas-frame').src =
+          'https://kicanvas.org/?github=' + repo + '/tree/' + ref;
+      });
+    });
+  })();
+  </script>
+  {{ end }}
+</article>
+{{ end }}

@@ -1,0 +1,181 @@
+name: KiCad Site Build & Deploy
+
+on:
+  workflow_call:
+    inputs:
+      project_name:
+        description: "Project name (e.g. pedalboard-hw)"
+        required: true
+        type: string
+      schematic:
+        description: "KiCad schematic filename"
+        required: true
+        type: string
+      pcb:
+        description: "KiCad PCB filename (optional)"
+        type: string
+        default: ""
+      kicad_dir:
+        description: "Directory containing KiCad project files"
+        type: string
+        default: "."
+      kibot_config:
+        description: "KiBot config filename (relative to kicad_dir)"
+        type: string
+        default: ""
+      container_image:
+        description: "KiCad container image"
+        type: string
+        default: "ghcr.io/inti-cmnb/kicad9_auto_full:latest"
+      site_dir:
+        description: "Directory containing Hugo site"
+        type: string
+        default: "site"
+      site_base_url:
+        description: "Base URL of the GitHub Pages site (e.g. https://pedalboard.github.io/pedalboard-hw)"
+        required: true
+        type: string
+      hugo_version:
+        description: "Hugo version"
+        type: string
+        default: "0.147.0"
+      remove_step_file:
+        description: "Remove large STEP file from output"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.container_image }}
+      options: --user root
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: "0"
+
+      - name: Install dependencies
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq rsync wget jq > /dev/null 2>&1
+
+      - name: Run KiBot
+        working-directory: ${{ inputs.kicad_dir }}
+        run: |
+          ARGS="-e ${{ inputs.schematic }} -d generated"
+          [ -n "${{ inputs.pcb }}" ] && ARGS="-b ${{ inputs.pcb }} $ARGS"
+          [ -n "${{ inputs.kibot_config }}" ] && ARGS="-c ${{ inputs.kibot_config }} $ARGS"
+          kibot $ARGS
+
+      - name: Remove STEP file
+        if: inputs.remove_step_file
+        run: rm -f "${{ inputs.kicad_dir }}/generated/3D/${{ inputs.project_name }}-3D.step"
+
+      - name: Determine version
+        id: ver
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install Hugo
+        run: |
+          wget -q "https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugo_version }}/hugo_extended_${{ inputs.hugo_version }}_linux-amd64.tar.gz" -O /tmp/hugo.tar.gz
+          tar -xzf /tmp/hugo.tar.gz -C /usr/local/bin hugo
+
+      - name: Discover renders and downloads
+        id: assets
+        run: |
+          GEN="${{ inputs.kicad_dir }}/generated"
+
+          # Renders
+          RENDERS="[]"
+          if [ -d "$GEN/3D" ]; then
+            RENDERS=$(find "$GEN/3D" -name '*.png' -printf '%f\n' | sort | jq -R . | jq -s .)
+          fi
+          echo "renders=$(echo $RENDERS | jq -c .)" >> "$GITHUB_OUTPUT"
+
+          # Downloads
+          DL="[]"
+          add() {
+            local m=$(find "$GEN" -path "$GEN/$2" -type f 2>/dev/null | head -1)
+            [ -n "$m" ] && DL=$(echo "$DL" | jq --arg n "$1" --arg p "${m#$GEN/}" '. + [{"name":$n,"path":$p}]')
+          }
+          add "Schematic (PDF)" "Schematic/*.pdf"
+          add "BOM (HTML)" "BoM/Generic/*bom*.html"
+          add "BOM (CSV)" "BoM/Generic/*bom*.csv"
+          add "Interactive BOM" "Assembly/*ibom*.html"
+          add "JLCPCB" "Manufacturers/JLCPCB/*.zip"
+          add "PCBWay" "Manufacturers/PCBWay/*.zip"
+          echo "downloads=$(echo $DL | jq -c .)" >> "$GITHUB_OUTPUT"
+
+      - name: Build Hugo site
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          SITE="${{ inputs.site_dir }}"
+          BASE="${{ inputs.site_base_url }}/${TAG}/"
+
+          # Copy KiBot outputs into Hugo static dir
+          rsync -a "${{ inputs.kicad_dir }}/generated/" "${SITE}/static/"
+
+          # Override params for this version build
+          hugo --source "$SITE" --minify \
+            --baseURL "$BASE" \
+            --params.version "$TAG" \
+            --params.renders "$(echo '${{ steps.assets.outputs.renders }}')" \
+            --params.downloads "$(echo '${{ steps.assets.outputs.downloads }}')"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: site-${{ steps.ver.outputs.tag }}
+          path: ${{ inputs.site_dir }}/public
+
+      # --- Deploy ---
+
+      - name: Update versions.json
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git fetch origin gh-pages:gh-pages 2>/dev/null || true
+
+          # Get existing versions.json from gh-pages
+          EXISTING="[]"
+          git show gh-pages:versions.json > /tmp/old-versions.json 2>/dev/null && \
+            EXISTING=$(jq 'map(select(.tag != "'"$TAG"'"))' /tmp/old-versions.json)
+
+          # Build new entry
+          NEW=$(jq -n --arg tag "$TAG" '{tag:$tag}')
+
+          # Prepend, mark first as latest
+          echo "$EXISTING" | jq --argjson new "$NEW" \
+            '[$new] + [.[] | del(.latest)] | .[0].latest = true' > /tmp/versions.json
+
+          mkdir -p deploy-root
+          cp /tmp/versions.json deploy-root/versions.json
+          # Root redirect to latest
+          echo '<meta http-equiv="refresh" content="0;url=latest/">' > deploy-root/index.html
+          touch deploy-root/.nojekyll
+
+      - name: Deploy root files
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: deploy-root
+          clean: false
+
+      - name: Deploy versioned site
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: ${{ inputs.site_dir }}/public
+          target-folder: ${{ steps.ver.outputs.tag }}

@@ -1,0 +1,11 @@
+<section id="links">
+  <h2>Links</h2>
+  <ul>
+    {{ with .Site.Params.repoURL }}<li><a href="{{ . }}">GitHub Repository</a></li>{{ end }}
+    {{ with .Site.Params.oshwaID }}<li><a href="https://certification.oshwa.org/{{ . | lower }}.html">OSHWA Certification ({{ . }})</a></li>{{ end }}
+    {{ with .Site.Params.digikeyURL }}<li><a href="{{ . }}">DigiKey BOM</a></li>{{ end }}
+    {{ with .Site.Params.mouserURL }}<li><a href="{{ . }}">Mouser BOM</a></li>{{ end }}
+    {{ with .Site.Params.pcbwayURL }}<li><a href="{{ . }}">PCBWay Fabrication</a></li>{{ end }}
+    {{ with .Site.Params.jlcpcbURL }}<li><a href="{{ . }}">JLCPCB Fabrication</a></li>{{ end }}
+  </ul>
+</section>

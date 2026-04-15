@@ -1,0 +1,19 @@
+{{ define "main" }}
+<article>
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+  {{ $renders := .Site.Params.renders }}
+  {{ with $renders }}
+  <div class="gallery-grid">
+    {{ range . }}
+    <figure>
+      <img src="{{ $.Site.BaseURL }}3D/{{ . }}" alt="{{ . }}" loading="lazy">
+      <figcaption>{{ . | replaceRE `[-_]` " " | replaceRE `\.png$` "" }}</figcaption>
+    </figure>
+    {{ end }}
+  </div>
+  {{ else }}
+  <p>No renders available for this version.</p>
+  {{ end }}
+</article>
+{{ end }}

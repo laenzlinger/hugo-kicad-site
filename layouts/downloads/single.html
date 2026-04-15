@@ -1,0 +1,16 @@
+{{ define "main" }}
+<article>
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+  {{ $downloads := .Site.Params.downloads }}
+  {{ with $downloads }}
+  <ul class="download-list">
+    {{ range . }}
+    <li><a href="{{ $.Site.BaseURL }}{{ .path }}">{{ .name }}</a></li>
+    {{ end }}
+  </ul>
+  {{ else }}
+  <p>No downloads available for this version.</p>
+  {{ end }}
+</article>
+{{ end }}
