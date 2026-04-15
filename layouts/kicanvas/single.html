@@ -2,14 +2,11 @@
 <article>
   <h1>{{ .Title }}</h1>
   {{ .Content }}
-  {{ with .Site.Params.repoURL }}
-  {{ $ref := site.Params.version | default "main" }}
-  {{ $dir := site.Params.kicadDir | default "" }}
-  <iframe id="kicanvas-frame" width="100%" height="600" frameborder="0" loading="lazy"></iframe>
-  <script>
-  document.getElementById('kicanvas-frame').src =
-    'https://kicanvas.org/?github={{ . }}/tree/{{ $ref }}/{{ $dir }}';
-  </script>
-  {{ end }}
+  <script type="module" src="https://kicanvas.org/kicanvas/kicanvas.js"></script>
+  <kicanvas-embed controls="full" theme="kicad" controlslist="nooverlay">
+    {{ range .Site.Params.kicadFiles }}
+    <kicanvas-source src="{{ $.Site.BaseURL }}kicad/{{ . }}"></kicanvas-source>
+    {{ end }}
+  </kicanvas-embed>
 </article>
 {{ end }}
