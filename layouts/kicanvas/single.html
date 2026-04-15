@@ -3,42 +3,12 @@
   <h1>{{ .Title }}</h1>
   {{ .Content }}
   {{ with .Site.Params.repoURL }}
-  {{ $repo := . }}
   {{ $ref := site.Params.version | default "main" }}
   {{ $dir := site.Params.kicadDir | default "" }}
-  {{ $sch := site.Params.schematicFile | default "" }}
-  {{ $pcb := site.Params.pcbFile | default "" }}
-  <div class="kicanvas-tabs">
-    {{ with $sch }}<button class="tab active" onclick="loadKiCanvas('sch', this)">Schematic</button>{{ end }}
-    {{ with $pcb }}<button class="tab" onclick="loadKiCanvas('pcb', this)">PCB</button>{{ end }}
-  </div>
   <iframe id="kicanvas-frame" width="100%" height="600" frameborder="0" loading="lazy"></iframe>
   <script>
-  (function() {
-    var repo = '{{ $repo }}';
-    var ref = '{{ $ref }}';
-    var dir = '{{ $dir }}';
-    var files = { sch: '{{ $sch }}', pcb: '{{ $pcb }}' };
-    var prefix = dir ? dir + '/' : '';
-
-    function kicanvasURL(type) {
-      if (type === 'sch') {
-        // Schematics may have sub-sheets — use tree URL for the directory
-        return 'https://kicanvas.org/?github=' + repo + '/tree/' + ref + '/' + (dir || '');
-      }
-      // PCB is self-contained — link to specific file
-      return 'https://kicanvas.org/?github=' + repo + '/blob/' + ref + '/' + prefix + files[type];
-    }
-
-    window.loadKiCanvas = function(type, btn) {
-      document.querySelectorAll('.kicanvas-tabs .tab').forEach(function(t) { t.classList.remove('active'); });
-      btn.classList.add('active');
-      document.getElementById('kicanvas-frame').src = kicanvasURL(type);
-    };
-
-    var def = files.sch ? 'sch' : 'pcb';
-    document.getElementById('kicanvas-frame').src = kicanvasURL(def);
-  })();
+  document.getElementById('kicanvas-frame').src =
+    'https://kicanvas.org/?github={{ . }}/tree/{{ $ref }}/{{ $dir }}';
   </script>
   {{ end }}
 </article>
