@@ -22,6 +22,11 @@
     var prefix = dir ? dir + '/' : '';
 
     function kicanvasURL(type) {
+      if (type === 'sch') {
+        // Schematics may have sub-sheets — use tree URL for the directory
+        return 'https://kicanvas.org/?github=' + repo + '/tree/' + ref + '/' + (dir || '');
+      }
+      // PCB is self-contained — link to specific file
       return 'https://kicanvas.org/?github=' + repo + '/blob/' + ref + '/' + prefix + files[type];
     }
 
@@ -31,7 +36,6 @@
       document.getElementById('kicanvas-frame').src = kicanvasURL(type);
     };
 
-    // Load default (schematic if available, else pcb)
     var def = files.sch ? 'sch' : 'pcb';
     document.getElementById('kicanvas-frame').src = kicanvasURL(def);
   })();
