@@ -1,0 +1,29 @@
+{{ define "main" }}
+<article class="post-single">
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+  {{ $version := .Site.Params.version | default "main" }}
+  {{ $isRelease := and (ne $version "main") (ne $version "latest") }}
+  {{ if $isRelease }}
+    {{ with .Site.Params.repoURL }}
+    <p><a href="{{ . }}/releases/tag/{{ $version }}">📋 Release notes on GitHub</a></p>
+    {{ end }}
+    {{ $diffs := .Site.Params.diffs }}
+    {{ with $diffs }}
+    <h2>Schematic & PCB Diff</h2>
+    <p>Visual diff against the previous release:</p>
+    <ul class="download-list">
+      {{ range . }}
+      <li><a href="{{ $.Site.BaseURL }}{{ .path }}">{{ .name }}</a></li>
+      {{ end }}
+    </ul>
+    {{ end }}
+    {{ if not $diffs }}
+    <p>No diffs available (first release or diff generation failed).</p>
+    {{ end }}
+  {{ else }}
+    <p>Changes are shown for released versions only.</p>
+    {{ with .Site.Params.repoURL }}<p><a href="{{ . }}/releases">→ View releases on GitHub</a></p>{{ end }}
+  {{ end }}
+</article>
+{{ end }}
