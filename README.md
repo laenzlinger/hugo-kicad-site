@@ -63,9 +63,6 @@ module:
 params:
   projectName: "My KiCad Project"
   repoURL: "https://github.com/org/repo"
-  schematicFile: "project.kicad_sch"
-  pcbFile: "project.kicad_pcb"
-  oshwaID: "CH000023"
 ```
 
 See [exampleSite/hugo.yaml](exampleSite/hugo.yaml) for all parameters.
@@ -79,6 +76,7 @@ Built-in page types (set via `type` in front matter):
 | `kicanvas` | Embedded KiCanvas schematic/PCB viewer |
 | `gallery` | 3D render image grid |
 | `downloads` | Auto-generated download list |
+| `changes` | Release notes link + schematic/PCB diff |
 | *(default)* | Standard markdown page |
 
 Custom pages are plain markdown — add as many as you need.
@@ -90,3 +88,7 @@ See [docs/ci.md](docs/ci.md) for GitHub Actions integration.
 ## License
 
 MIT
+
+## Credits
+
+Built on top of [PaperMod](https://github.com/adityatelange/hugo-PaperMod). All custom layouts use PaperMod's `baseof.html` and styling.

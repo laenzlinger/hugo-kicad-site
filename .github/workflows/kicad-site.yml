@@ -27,6 +27,10 @@ on:
         description: "KiCad container image"
         type: string
         default: "ghcr.io/inti-cmnb/kicad9_auto_full:latest"
+      kibot_install:
+        description: "Custom KiBot install command (e.g. pip install from dev branch). Leave empty if container already has KiBot."
+        type: string
+        default: ""
       site_dir:
         description: "Directory containing Hugo site"
         type: string
@@ -61,7 +65,11 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update -qq
-          apt-get install -y -qq rsync wget jq > /dev/null 2>&1
+          apt-get install -y -qq python3-pip python3-lxml git rsync wget jq > /dev/null 2>&1
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          if [ -n "${{ inputs.kibot_install }}" ]; then
+            ${{ inputs.kibot_install }}
+          fi
 
       - name: Run KiBot
         working-directory: ${{ inputs.kicad_dir }}
@@ -84,52 +92,90 @@ jobs:
             echo "tag=latest" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Install Hugo
+      - name: KiBot diffs (tag only)
+        if: startsWith(github.ref, 'refs/tags/')
+        working-directory: ${{ inputs.kicad_dir }}
+        continue-on-error: true
         run: |
+          ARGS="-e ${{ inputs.schematic }} -d generated -s run_erc,run_drc diff_sch diff_pcb"
+          [ -n "${{ inputs.pcb }}" ] && ARGS="-b ${{ inputs.pcb }} $ARGS"
+          [ -n "${{ inputs.kibot_config }}" ] && ARGS="-c ${{ inputs.kibot_config }} $ARGS"
+          kibot $ARGS
+
+      - name: Install Hugo and Go
+        run: |
+          wget -q "https://go.dev/dl/go1.23.8.linux-amd64.tar.gz" -O /tmp/go.tar.gz
+          tar -xzf /tmp/go.tar.gz -C /usr/local
           wget -q "https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugo_version }}/hugo_extended_${{ inputs.hugo_version }}_linux-amd64.tar.gz" -O /tmp/hugo.tar.gz
           tar -xzf /tmp/hugo.tar.gz -C /usr/local/bin hugo
 
-      - name: Discover renders and downloads
+      - name: Discover assets
         id: assets
         run: |
           GEN="${{ inputs.kicad_dir }}/generated"
 
           # Renders
           RENDERS="[]"
-          if [ -d "$GEN/3D" ]; then
-            RENDERS=$(find "$GEN/3D" -name '*.png' -printf '%f\n' | sort | jq -R . | jq -s .)
-          fi
+          [ -d "$GEN/3D" ] && RENDERS=$(find "$GEN/3D" -name '*.png' -printf '%f\n' | sort | jq -R . | jq -s .)
           echo "renders=$(echo $RENDERS | jq -c .)" >> "$GITHUB_OUTPUT"
 
-          # Downloads
+          # Downloads — search by name pattern to support any KiBot directory layout
           DL="[]"
           add() {
-            local m=$(find "$GEN" -path "$GEN/$2" -type f 2>/dev/null | head -1)
+            local m=$(find "$GEN" -name "$2" -type f $3 2>/dev/null | head -1)
             [ -n "$m" ] && DL=$(echo "$DL" | jq --arg n "$1" --arg p "${m#$GEN/}" '. + [{"name":$n,"path":$p}]')
           }
-          add "Schematic (PDF)" "Schematic/*.pdf"
-          add "BOM (HTML)" "BoM/Generic/*bom*.html"
-          add "BOM (CSV)" "BoM/Generic/*bom*.csv"
-          add "Interactive BOM" "Assembly/*ibom*.html"
-          add "JLCPCB" "Manufacturers/JLCPCB/*.zip"
-          add "PCBWay" "Manufacturers/PCBWay/*.zip"
+          add "Schematic (PDF)" "*schematic*.pdf"
+          add "BOM (HTML)" "*bom*.html" "! -name *ibom*"
+          add "BOM (CSV)" "*bom*.csv" "! -name *ibom*"
+          add "Interactive BOM" "*ibom*.html"
+          add "JLCPCB" "*JLCPCB*.zip"
+          add "PCBWay" "*PCBWay*.zip"
           echo "downloads=$(echo $DL | jq -c .)" >> "$GITHUB_OUTPUT"
 
+          # Diffs
+          DIFFS="[]"
+          for f in $(find "$GEN/Diff" -name '*.html' -type f 2>/dev/null | sort); do
+            NAME=$(basename "$f" .html | sed 's/-/ /g; s/\b\(.\)/\u\1/g')
+            DIFFS=$(echo "$DIFFS" | jq --arg n "$NAME" --arg p "${f#$GEN/}" '. + [{"name":$n,"path":$p}]')
+          done
+          echo "diffs=$(echo $DIFFS | jq -c .)" >> "$GITHUB_OUTPUT"
+
       - name: Build Hugo site
+        env:
+          PATH: "/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin"
         run: |
           TAG="${{ steps.ver.outputs.tag }}"
+          VERSION="$TAG"
+          [ "$TAG" = "latest" ] && VERSION="main"
           SITE="${{ inputs.site_dir }}"
           BASE="${{ inputs.site_base_url }}/${TAG}/"
 
           # Copy KiBot outputs into Hugo static dir
           rsync -a "${{ inputs.kicad_dir }}/generated/" "${SITE}/static/"
 
-          # Override params for this version build
-          hugo --source "$SITE" --minify \
-            --baseURL "$BASE" \
-            --params.version "$TAG" \
-            --params.renders "$(echo '${{ steps.assets.outputs.renders }}')" \
-            --params.downloads "$(echo '${{ steps.assets.outputs.downloads }}')"
+          # Copy KiCad files for KiCanvas
+          mkdir -p "${SITE}/static/kicad"
+          cp ${{ inputs.kicad_dir }}/*.kicad_sch ${{ inputs.kicad_dir }}/*.kicad_pcb "${SITE}/static/kicad/" 2>/dev/null || true
+          KICAD_FILES=$(cd "${SITE}/static/kicad" && ls *.kicad_sch *.kicad_pcb 2>/dev/null | jq -R . | jq -s -c .)
+
+          # Clear downloads/diffs for latest (non-release) builds
+          if [ "$TAG" = "latest" ]; then
+            DOWNLOADS='[]'
+            DIFFS='[]'
+          else
+            DOWNLOADS='${{ steps.assets.outputs.downloads }}'
+            DIFFS='${{ steps.assets.outputs.diffs }}'
+          fi
+
+          # Build config override with dynamic params
+          printf 'baseURL: %s\nparams:\n  version: "%s"\n  kicadFiles: %s\n  renders: %s\n  downloads: %s\n  diffs: %s\n' \
+            "$BASE" "$VERSION" "$KICAD_FILES" '${{ steps.assets.outputs.renders }}' "$DOWNLOADS" "$DIFFS" \
+            > "${SITE}/config_override.yaml"
+
+          cd "$SITE"
+          hugo mod get
+          hugo --minify --config hugo.yaml,config_override.yaml
 
       - name: Upload artifact
         uses: actions/upload-artifact@v5

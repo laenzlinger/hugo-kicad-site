@@ -42,6 +42,7 @@ jobs:
 | `kicad_dir` | `.` | Directory containing KiCad files |
 | `kibot_config` | `""` | KiBot config filename |
 | `container_image` | `ghcr.io/inti-cmnb/kicad9_auto_full:latest` | KiCad container |
+| `kibot_install` | `""` | Custom KiBot install command (for containers without KiBot) |
 | `site_dir` | `site` | Directory with Hugo site |
 | `hugo_version` | `0.147.0` | Hugo version |
 | `remove_step_file` | `true` | Remove large STEP file |
@@ -71,6 +72,8 @@ jobs:
       schematic: "granit.kicad_sch"
       pcb: "granit.kicad_pcb"
       kicad_dir: "hardware"
+      kibot_config: "granit.kibot.yaml"
       container_image: "kicad/kicad:10.0"
+      kibot_install: "pip install --break-system-packages --no-compile git+https://github.com/INTI-CMNB/KiBot.git@dev"
       site_base_url: "https://laenzlinger.github.io/granit"
 ```
