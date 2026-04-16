@@ -181,9 +181,9 @@ jobs:
           fi
 
           # Build config override with dynamic params
-          printf 'baseURL: %s\nparams:\n  version: "%s"\n  kicadFiles: %s\n  renders: %s\n  downloads: %s\n  diffs: %s\n  assemblyModels: %s\n' \
-            "$BASE" "$VERSION" "$KICAD_FILES" '${{ steps.assets.outputs.renders }}' "$DOWNLOADS" "$DIFFS" "$ASSEMBLY_MODELS" \
-            > "${SITE}/config_override.yaml"
+          OVERRIDE="baseURL: ${BASE}\nparams:\n  version: \"${VERSION}\"\n  kicadFiles: ${KICAD_FILES}\n  renders: ${{ steps.assets.outputs.renders }}\n  downloads: ${DOWNLOADS}\n  diffs: ${DIFFS}"
+          [ "$ASSEMBLY_MODELS" != "[]" ] && OVERRIDE="${OVERRIDE}\n  assemblyModels: ${ASSEMBLY_MODELS}"
+          printf "$OVERRIDE\n" > "${SITE}/config_override.yaml"
 
           cd "$SITE"
           hugo mod get
