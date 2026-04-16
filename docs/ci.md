@@ -46,6 +46,7 @@ jobs:
 | `site_dir` | `site` | Directory with Hugo site |
 | `hugo_version` | `0.147.0` | Hugo version |
 | `remove_step_file` | `true` | Remove large STEP file |
+| `assembly_dir` | `""` | Directory containing assembly 3D models (STEP/GLB) |
 
 ## How it works
 
@@ -75,5 +76,6 @@ jobs:
       kibot_config: "granit.kibot.yaml"
       container_image: "kicad/kicad:10.0"
       kibot_install: "pip install --break-system-packages --no-compile git+https://github.com/INTI-CMNB/KiBot.git@dev"
+      assembly_dir: "mechanical"
       site_base_url: "https://laenzlinger.github.io/granit"
 ```

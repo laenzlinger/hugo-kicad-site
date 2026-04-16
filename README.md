@@ -77,6 +77,7 @@ Built-in page types (set via `type` in front matter):
 | `gallery` | 3D render image grid |
 | `downloads` | Auto-generated download list |
 | `changes` | Release notes link + schematic/PCB diff |
+| `assembly` | Interactive 3D model viewer (STEP/GLB via [Online3DViewer](https://github.com/kovacsv/Online3DViewer)) |
 | *(default)* | Standard markdown page |
 
 Custom pages are plain markdown — add as many as you need.

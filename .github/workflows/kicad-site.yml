@@ -47,6 +47,10 @@ on:
         description: "Remove large STEP file from output"
         type: boolean
         default: true
+      assembly_dir:
+        description: "Directory containing assembly 3D model files (STEP/GLB). Leave empty to skip."
+        type: string
+        default: ""
 
 permissions:
   contents: write
@@ -159,6 +163,14 @@ jobs:
           cp ${{ inputs.kicad_dir }}/*.kicad_sch ${{ inputs.kicad_dir }}/*.kicad_pcb "${SITE}/static/kicad/" 2>/dev/null || true
           KICAD_FILES=$(cd "${SITE}/static/kicad" && ls *.kicad_sch *.kicad_pcb 2>/dev/null | jq -R . | jq -s -c .)
 
+          # Copy assembly models (STEP/GLB)
+          ASSEMBLY_MODELS="[]"
+          if [ -n "${{ inputs.assembly_dir }}" ] && [ -d "${{ inputs.assembly_dir }}" ]; then
+            mkdir -p "${SITE}/static/assembly"
+            find "${{ inputs.assembly_dir }}" -maxdepth 1 \( -name 'assembly-*.step' -o -name 'assembly-*.glb' \) -exec cp {} "${SITE}/static/assembly/" \;
+            ASSEMBLY_MODELS=$(cd "${SITE}/static/assembly" && ls *.step *.glb 2>/dev/null | jq -R '{name: (. | sub("assembly-";"") | sub("\\.(step|glb)$";"") | gsub("[-_]";" ")), file: .}' | jq -s -c .)
+          fi
+
           # Clear downloads/diffs for latest (non-release) builds
           if [ "$TAG" = "latest" ]; then
             DOWNLOADS='[]'
@@ -169,8 +181,8 @@ jobs:
           fi
 
           # Build config override with dynamic params
-          printf 'baseURL: %s\nparams:\n  version: "%s"\n  kicadFiles: %s\n  renders: %s\n  downloads: %s\n  diffs: %s\n' \
-            "$BASE" "$VERSION" "$KICAD_FILES" '${{ steps.assets.outputs.renders }}' "$DOWNLOADS" "$DIFFS" \
+          printf 'baseURL: %s\nparams:\n  version: "%s"\n  kicadFiles: %s\n  renders: %s\n  downloads: %s\n  diffs: %s\n  assemblyModels: %s\n' \
+            "$BASE" "$VERSION" "$KICAD_FILES" '${{ steps.assets.outputs.renders }}' "$DOWNLOADS" "$DIFFS" "$ASSEMBLY_MODELS" \
             > "${SITE}/config_override.yaml"
 
           cd "$SITE"
