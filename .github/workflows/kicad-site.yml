@@ -167,8 +167,8 @@ jobs:
           ASSEMBLY_MODELS="[]"
           if [ -n "${{ inputs.assembly_dir }}" ] && [ -d "${{ inputs.assembly_dir }}" ]; then
             mkdir -p "${SITE}/static/assembly"
-            find "${{ inputs.assembly_dir }}" -maxdepth 1 \( -name 'assembly-*.step' -o -name 'assembly-*.glb' \) -exec cp {} "${SITE}/static/assembly/" \;
-            ASSEMBLY_MODELS=$(cd "${SITE}/static/assembly" && ls *.step *.glb 2>/dev/null | jq -R '{name: (. | sub("assembly-";"") | sub("\\.(step|glb)$";"") | gsub("[-_]";" ")), file: .}' | jq -s -c .)
+            find "${{ inputs.assembly_dir }}" -maxdepth 1 \( -name 'assembly-*.step' -o -name 'assembly-*.glb' -o -name 'assembly-*.3mf' \) -exec cp {} "${SITE}/static/assembly/" \;
+            ASSEMBLY_MODELS=$(cd "${SITE}/static/assembly" && ls *.step *.glb *.3mf 2>/dev/null | jq -R '{name: (. | sub("assembly-";"") | sub("\\.(step|glb|3mf)$";"") | gsub("[-_]";" ")), file: .}' | jq -s -c .)
           fi
 
           # Clear downloads/diffs for latest (non-release) builds
