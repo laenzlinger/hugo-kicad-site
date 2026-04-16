@@ -161,7 +161,12 @@ jobs:
           # Copy KiCad files for KiCanvas
           mkdir -p "${SITE}/static/kicad"
           cp ${{ inputs.kicad_dir }}/*.kicad_sch ${{ inputs.kicad_dir }}/*.kicad_pcb "${SITE}/static/kicad/" 2>/dev/null || true
-          KICAD_FILES=$(cd "${SITE}/static/kicad" && ls *.kicad_sch *.kicad_pcb 2>/dev/null | jq -R . | jq -s -c .)
+          # Order: root schematic first, then remaining schematics, then PCB
+          KICAD_FILES=$(cd "${SITE}/static/kicad" && {
+            [ -f "${{ inputs.schematic }}" ] && echo "${{ inputs.schematic }}"
+            ls *.kicad_sch 2>/dev/null | grep -v "^${{ inputs.schematic }}$"
+            ls *.kicad_pcb 2>/dev/null
+          } | jq -R . | jq -s -c .)
 
           # Copy assembly models (STEP/GLB/3MF)
           ASSEMBLY_MODELS="[]"

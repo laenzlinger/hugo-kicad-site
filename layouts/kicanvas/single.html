@@ -3,10 +3,15 @@
   <h1>{{ .Title }}</h1>
   {{ .Content }}
   <script type="module" src="https://kicanvas.org/kicanvas/kicanvas.js"></script>
-  <kicanvas-embed controls="full" theme="kicad" controlslist="nooverlay">
+  <kicanvas-embed id="kicanvas-viewer" theme="kicad" controlslist="nooverlay">
     {{ range .Site.Params.kicadFiles }}
     <kicanvas-source src="{{ $.Site.BaseURL }}kicad/{{ . }}"></kicanvas-source>
     {{ end }}
   </kicanvas-embed>
+  <script>
+    // Set controls attribute via JS to prevent Hugo minifier from
+    // stripping the value (it treats "controls" as a boolean HTML attribute).
+    document.getElementById('kicanvas-viewer').setAttribute('controls', 'full');
+  </script>
 </article>
 {{ end }}
