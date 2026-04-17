@@ -22,7 +22,7 @@ kicanvas-embed { width: 100%; height: 600px; display: block; border: 1px solid v
 .viewer-fullscreen-btn {
   position: absolute;
   top: 8px;
-  right: 8px;
+  left: 8px;
   z-index: 10;
   background: var(--code-bg);
   color: var(--content);
@@ -38,6 +38,6 @@ kicanvas-embed { width: 100%; height: 600px; display: block; border: 1px solid v
 .viewer-fullscreen-btn:hover { opacity: 1; }
 .viewer-wrap:fullscreen { background: var(--theme, #fff); }
 .viewer-wrap:fullscreen kicanvas-embed,
-.viewer-wrap:fullscreen .online_3d_viewer { width: 100%; height: 100%; border: none; border-radius: 0; }
-.viewer-wrap:fullscreen .viewer-fullscreen-btn { position: fixed; top: 8px; right: 8px; }
+.viewer-wrap:fullscreen .online_3d_viewer { width: 100% !important; height: 100% !important; border: none; border-radius: 0; }
+.viewer-wrap:fullscreen .viewer-fullscreen-btn { position: fixed; top: 8px; left: 8px; }
 </style>
