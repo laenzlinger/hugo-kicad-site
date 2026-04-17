@@ -18,6 +18,23 @@ kicanvas-embed { width: 100%; height: 600px; display: block; border: 1px solid v
 .download-list li::before { content: "⬇ "; }
 .assembly-model { margin: 1.5rem 0; }
 .assembly-model .online_3d_viewer { width: 100%; height: 600px; border: 1px solid var(--border); border-radius: 6px; }
+.release-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--content);
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+.release-card:hover { border-color: var(--primary); }
+.release-card-icon { width: 32px; height: 32px; flex-shrink: 0; }
+.release-card strong { display: block; font-size: 1.05rem; }
+.release-card span { color: var(--secondary); font-size: 0.9rem; }
 .viewer-wrap { position: relative; }
 .viewer-fullscreen-btn {
   position: absolute;
