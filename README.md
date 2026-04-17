@@ -51,7 +51,7 @@ pedalboard-hw/
         ├── _index.md         ← overview (custom markdown)
         ├── schematic.md      ← type: kicanvas
         ├── gallery.md        ← type: gallery
-        ├── downloads.md      ← type: downloads
+        ├── release.md        ← type: release
         └── my-custom-page.md ← any additional content
 ```
 
@@ -77,9 +77,10 @@ Built-in page types (set via `type` in front matter):
 |------|-------------|
 | `kicanvas` | Embedded KiCanvas schematic/PCB viewer |
 | `gallery` | 3D render image grid |
-| `downloads` | Auto-generated download list |
-| `changes` | Release notes link + schematic/PCB diff |
+| `release` | Combined release notes, downloads, and schematic/PCB diffs |
 | `assembly` | Interactive 3D model viewer (STEP/GLB via [Online3DViewer](https://github.com/kovacsv/Online3DViewer)) |
+| `downloads` | Auto-generated download list (standalone, use `release` instead) |
+| `changes` | Release notes + diffs (standalone, use `release` instead) |
 | *(default)* | Standard markdown page |
 
 Custom pages are plain markdown — add as many as you need.
