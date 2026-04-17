@@ -32,6 +32,14 @@
   </div>
   {{ end }}
 
+  {{ with .Site.Params.ibom }}
+  <h2>Interactive BOM</h2>
+  <div class="viewer-wrap">
+    {{ partial "fullscreen-btn.html" $ }}
+    <iframe class="ibom-viewer" src="{{ $.Site.BaseURL }}{{ . }}" title="Interactive BOM"></iframe>
+  </div>
+  {{ end }}
+
   {{ with .Content }}
   {{ . }}
   {{ end }}

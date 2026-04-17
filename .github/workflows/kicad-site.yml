@@ -145,6 +145,10 @@ jobs:
           done
           echo "diffs=$(echo $DIFFS | jq -c .)" >> "$GITHUB_OUTPUT"
 
+          # Interactive BOM
+          IBOM=$(find "$GEN" -name '*ibom*.html' -type f 2>/dev/null | head -1)
+          [ -n "$IBOM" ] && echo "ibom=${IBOM#$GEN/}" >> "$GITHUB_OUTPUT" || echo "ibom=" >> "$GITHUB_OUTPUT"
+
       - name: Build Hugo site
         env:
           PATH: "/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin"
@@ -190,6 +194,7 @@ jobs:
 
           # Build config override with dynamic params
           OVERRIDE="baseURL: ${BASE}\nparams:\n  version: \"${VERSION}\"\n  kicadFiles: ${KICAD_FILES}\n  renders: ${{ steps.assets.outputs.renders }}\n  downloads: ${DOWNLOADS}\n  diffs: ${DIFFS}"
+          [ -n "${{ steps.assets.outputs.ibom }}" ] && OVERRIDE="${OVERRIDE}\n  ibom: \"${{ steps.assets.outputs.ibom }}\""
           [ "$ASSEMBLY_MODELS" != "[]" ] && OVERRIDE="${OVERRIDE}\n  assemblyModels: ${ASSEMBLY_MODELS}"
           printf "$OVERRIDE\n" > "${SITE}/config_override.yaml"
 
