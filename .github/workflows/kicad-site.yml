@@ -71,8 +71,9 @@ jobs:
           apt-get update -qq
           apt-get install -y -qq python3-pip python3-lxml git rsync wget jq > /dev/null 2>&1
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          if [ -n "${{ inputs.kibot_install }}" ]; then
-            ${{ inputs.kibot_install }}
+          KIBOT_INSTALL="${{ inputs.kibot_install }}"
+          if [ -n "$KIBOT_INSTALL" ]; then
+            eval "$KIBOT_INSTALL"
           fi
 
       - name: Run KiBot
