@@ -10,6 +10,9 @@ A reusable Hugo theme for KiCad hardware project documentation.
 - Version picker in the nav bar on every page
 - Embedded [KiCanvas](https://kicanvas.org/) viewer for interactive schematic/PCB browsing
 - 3D render gallery (from KiBot/Blender exports)
+- Interactive 3D assembly viewer (STEP/GLB/3MF via [Online3DViewer](https://github.com/kovacsv/Online3DViewer))
+- Combined release page with downloads, diffs, and GitHub release link
+- Fullscreen toggle on all viewers
 - Downloads section (Gerbers, BOM, iBOM, schematics)
 - Links to GitHub repo, OSHWA certification, fabrication, BOM suppliers
 - Extensible with custom markdown pages (assembly guides, design notes, etc.)
@@ -26,10 +29,10 @@ gh-pages/
 ├── versions.json       ← version list for the picker
 ├── latest/             ← full site built from main branch
 │   ├── index.html      ← overview
-│   ├── schematic/      ← KiCanvas viewer
-│   ├── gallery/        ← 3D renders
-│   ├── downloads/      ← generated assets
-│   └── assembly-guide/ ← custom content
+│   ├── board/          ← KiCanvas viewer + 3D renders + design notes
+│   ├── release/        ← downloads, diffs, GitHub release link
+│   ├── assembly/       ← interactive 3D model viewer
+│   └── software/       ← custom content
 └── v4.0.0/             ← full site built from tag
     └── ...
 ```

@@ -23,12 +23,9 @@ params:
 
 menu:
   main:
-    - name: Schematic
-      url: /schematic/
+    - name: Board
+      url: /board/
       weight: 20
-    - name: Gallery
-      url: /gallery/
+    - name: Release
+      url: /release/
       weight: 30
-    - name: Downloads
-      url: /downloads/
-      weight: 40
