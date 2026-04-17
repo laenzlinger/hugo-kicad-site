@@ -1,1 +1,4 @@
 {{ partial "version-picker.html" . }}
+{{ with .Site.Params.license }}
+<div class="footer-license">License: {{ . }}</div>
+{{ end }}
