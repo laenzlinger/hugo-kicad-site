@@ -44,7 +44,7 @@ jobs:
 | `container_image` | `ghcr.io/inti-cmnb/kicad9_auto_full:latest` | KiCad container |
 | `kibot_install` | `""` | Custom KiBot install command (for containers without KiBot) |
 | `site_dir` | `site` | Directory with Hugo site |
-| `hugo_version` | `0.147.0` | Hugo version |
+| `hugo_version` | `0.160.1` | Hugo version |
 | `remove_step_file` | `true` | Remove large STEP file |
 | `assembly_dir` | `""` | Directory containing assembly 3D models (STEP/GLB) |
 
