@@ -3,14 +3,15 @@
   <h1>{{ .Title }}</h1>
   {{ .Content }}
   <script type="module" src="https://kicanvas.org/kicanvas/kicanvas.js"></script>
-  <kicanvas-embed id="kicanvas-viewer">
-    {{ range .Site.Params.kicadFiles }}
-    <kicanvas-source src="{{ $.Site.BaseURL }}kicad/{{ . }}"></kicanvas-source>
-    {{ end }}
-  </kicanvas-embed>
+  <div class="viewer-wrap">
+    {{ partial "fullscreen-btn.html" . }}
+    <kicanvas-embed id="kicanvas-viewer">
+      {{ range .Site.Params.kicadFiles }}
+      <kicanvas-source src="{{ $.Site.BaseURL }}kicad/{{ . }}"></kicanvas-source>
+      {{ end }}
+    </kicanvas-embed>
+  </div>
   <script>
-    // Set attributes via JS to prevent Hugo minifier from stripping
-    // or mangling values on this web component.
     var v = document.getElementById('kicanvas-viewer');
     v.setAttribute('controls', 'full');
     v.setAttribute('theme', 'kicad');
