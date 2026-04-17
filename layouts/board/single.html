@@ -1,0 +1,39 @@
+{{ define "main" }}
+<article>
+  <h1>{{ .Title }}</h1>
+
+  <script type="module" src="https://kicanvas.org/kicanvas/kicanvas.js"></script>
+  <h2>Schematic &amp; PCB</h2>
+  <div class="viewer-wrap">
+    {{ partial "fullscreen-btn.html" . }}
+    <kicanvas-embed id="kicanvas-viewer">
+      {{ range .Site.Params.kicadFiles }}
+      <kicanvas-source src="{{ $.Site.BaseURL }}kicad/{{ . }}"></kicanvas-source>
+      {{ end }}
+    </kicanvas-embed>
+  </div>
+  <script>
+    var v = document.getElementById('kicanvas-viewer');
+    v.setAttribute('controls', 'full');
+    v.setAttribute('theme', 'kicad');
+    v.setAttribute('controlslist', 'nooverlay');
+  </script>
+
+  {{ $renders := .Site.Params.renders }}
+  {{ with $renders }}
+  <h2>3D Renders</h2>
+  <div class="gallery-grid">
+    {{ range . }}
+    <figure>
+      <img src="{{ $.Site.BaseURL }}3D/{{ . }}" alt="{{ . | replaceRE `[-_]` " " | replaceRE `\.png$` "" }}" loading="lazy">
+      <figcaption>{{ . | replaceRE `[-_]` " " | replaceRE `\.png$` "" }}</figcaption>
+    </figure>
+    {{ end }}
+  </div>
+  {{ end }}
+
+  {{ with .Content }}
+  {{ . }}
+  {{ end }}
+</article>
+{{ end }}
