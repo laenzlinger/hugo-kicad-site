@@ -4,7 +4,7 @@
     <h1 class="post-title entry-hint-parent">{{ .Title }}</h1>
     <div class="post-meta"></div>
   </header>
-  <div class="post-content">
+  <div class="post-content md-content">
   {{ .Content }}
   {{ $models := .Site.Params.assemblyModels }}
   {{ with $models }}
