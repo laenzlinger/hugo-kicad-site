@@ -1,6 +1,6 @@
 {{ define "main" }}
 <article>
-  <h1>{{ .Title }}</h1>
+
   {{ .Content }}
   {{ $version := .Site.Params.version | default "main" }}
   {{ $isRelease := and (ne $version "main") (ne $version "latest") }}
@@ -35,5 +35,6 @@
     </a>
     {{ end }}
   {{ end }}
+  </div>
 </article>
 {{ end }}

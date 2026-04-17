@@ -1,6 +1,9 @@
 {{ define "main" }}
-<article class="post-content">
-  <h1>{{ .Title }}</h1>
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">{{ .Title }}</h1>
+  </header>
+  <div class="post-content">
   {{ .Content }}
   {{ $models := .Site.Params.assemblyModels }}
   {{ with $models }}
@@ -36,5 +39,6 @@
   {{ else }}
   <p>No assembly models available for this version.</p>
   {{ end }}
+  </div>
 </article>
 {{ end }}
