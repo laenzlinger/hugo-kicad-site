@@ -2,6 +2,8 @@
 
 A reusable Hugo theme for KiCad hardware project documentation.
 
+**[Live demo →](https://laenzlinger.github.io/granit/latest/)** (Granit — a CM4 carrier board project using this theme)
+
 ## Features
 
 - Multi-page versioned documentation (Read the Docs style)
