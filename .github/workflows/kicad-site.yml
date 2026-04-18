@@ -97,8 +97,7 @@ jobs:
             echo "tag=latest" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: KiBot diffs (tag only)
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: KiBot diffs
         working-directory: ${{ inputs.kicad_dir }}
         continue-on-error: true
         run: |
@@ -195,11 +194,10 @@ jobs:
           # Clear downloads/diffs for latest (non-release) builds
           if [ "$TAG" = "latest" ]; then
             DOWNLOADS='[]'
-            DIFFS='[]'
           else
             DOWNLOADS='${{ steps.assets.outputs.downloads }}'
-            DIFFS='${{ steps.assets.outputs.diffs }}'
           fi
+          DIFFS='${{ steps.assets.outputs.diffs }}'
 
           # Build config override with dynamic params
           OVERRIDE="baseURL: ${BASE}\nparams:\n  version: \"${VERSION}\"\n  kicadFiles: ${KICAD_FILES}\n  renders: ${{ steps.assets.outputs.renders }}\n  downloads: ${DOWNLOADS}\n  diffs: ${DIFFS}"
