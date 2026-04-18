@@ -162,6 +162,7 @@ jobs:
 
           # Copy KiBot outputs into Hugo static dir
           rsync -a "${{ inputs.kicad_dir }}/generated/" "${SITE}/static/"
+          rm -f "${SITE}/static/index.html"
 
           # Copy KiCad files for KiCanvas
           mkdir -p "${SITE}/static/kicad"
