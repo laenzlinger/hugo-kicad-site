@@ -1,5 +1,14 @@
 {{ partial "version-picker.html" . }}
-<div class="footer-meta">
-{{ with .Site.Params.oshwaID }}<a href="https://certification.oshwa.org/{{ . | lower }}.html"><img src="https://img.shields.io/badge/OSHWA-{{ . }}-blue" alt="OSHWA {{ . }}"></a>{{ end }}
-{{ with .Site.Params.license }}<img src="https://img.shields.io/badge/License-{{ . | replaceRE `[-.]` "--" }}-green" alt="License: {{ . }}">{{ end }}
-</div>
+<script>
+// Replace "Powered by Hugo & PaperMod" with badges
+document.addEventListener('DOMContentLoaded', function() {
+  var footer = document.querySelector('footer.footer');
+  if (!footer) return;
+  var powered = footer.querySelector('span:last-of-type');
+  if (powered && powered.textContent.indexOf('Powered') !== -1) {
+    var badges = document.createElement('span');
+    badges.innerHTML = '{{ with .Site.Params.oshwaID }}<a href="https://certification.oshwa.org/{{ . | lower }}.html"><img src="https://img.shields.io/badge/OSHWA-{{ . }}-blue" alt="OSHWA {{ . }}" style="vertical-align:middle"></a> {{ end }}{{ with .Site.Params.license }}<img src="https://img.shields.io/badge/License-{{ . | replaceRE `[-.]` "--" }}-green" alt="License: {{ . }}" style="vertical-align:middle">{{ end }}';
+    powered.replaceWith(badges);
+  }
+});
+</script>
