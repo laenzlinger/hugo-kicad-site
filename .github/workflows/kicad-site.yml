@@ -119,9 +119,16 @@ jobs:
         run: |
           GEN="${{ inputs.kicad_dir }}/generated"
 
-          # Renders
+          # Renders (prefer Blender renders if available)
           RENDERS="[]"
-          [ -d "$GEN/3D" ] && RENDERS=$(find "$GEN/3D" -name '*.png' -printf '%f\n' | sort | jq -R . | jq -s .)
+          if [ -d "$GEN/3D" ]; then
+            BLENDER=$(find "$GEN/3D" -maxdepth 1 -name '*blender*.png' -printf '%f\n' | sort)
+            if [ -n "$BLENDER" ]; then
+              RENDERS=$(echo "$BLENDER" | jq -R . | jq -s .)
+            else
+              RENDERS=$(find "$GEN/3D" -maxdepth 1 -name '*.png' -printf '%f\n' | sort | jq -R . | jq -s .)
+            fi
+          fi
           echo "renders=$(echo $RENDERS | jq -c .)" >> "$GITHUB_OUTPUT"
 
           # Downloads — search by name pattern to support any KiBot directory layout
