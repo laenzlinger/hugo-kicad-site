@@ -10,13 +10,14 @@ params:
   projectName: "Open Pedalboard — Mainboard"
   description: "Open-source KiCad mainboard for guitar pedalboards"
   repoURL: "https://github.com/pedalboard/pedalboard-hw"
+  license: "CERN-OHL-P-2.0"
+  # oshwaID: "CH000023"
   version: "main"
   renders: []
   downloads: []
   kicadFiles: []
   # PaperMod params
   env: production
-  showBreadCrumbs: true
   socialIcons:
     - name: github
       url: "https://github.com/pedalboard/pedalboard-hw"
