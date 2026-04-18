@@ -147,7 +147,7 @@ jobs:
 
           # Diffs
           DIFFS="[]"
-          for f in $(find "$GEN/Diff" -name '*.html' -type f 2>/dev/null | sort); do
+          for f in $(find "$GEN/Diff" \( -name '*.html' -o -name '*.pdf' \) -type f 2>/dev/null | grep -v '(' | sort); do
             NAME=$(basename "$f" .html | sed 's/-/ /g; s/\b\(.\)/\u\1/g')
             DIFFS=$(echo "$DIFFS" | jq --arg n "$NAME" --arg p "${f#$GEN/}" '. + [{"name":$n,"path":$p}]')
           done
