@@ -101,7 +101,7 @@ jobs:
         working-directory: ${{ inputs.kicad_dir }}
         continue-on-error: true
         run: |
-          ARGS="-e ${{ inputs.schematic }} -d generated -s run_erc,run_drc diff_sch diff_pcb"
+          ARGS="-e ${{ inputs.schematic }} -d generated -s run_erc,run_drc diff_sch diff_pcb basic_diff_sch basic_diff_pcb"
           [ -n "${{ inputs.pcb }}" ] && ARGS="-b ${{ inputs.pcb }} $ARGS"
           [ -n "${{ inputs.kibot_config }}" ] && ARGS="-c ${{ inputs.kibot_config }} $ARGS"
           kibot $ARGS
@@ -146,7 +146,7 @@ jobs:
 
           # Diffs
           DIFFS="[]"
-          for f in $(find "$GEN/Diff" \( -name '*.html' -o -name '*.pdf' \) -type f 2>/dev/null | grep -v '(' | sort); do
+          for f in $(find "$GEN/Diff" "$GEN/diff" \( -name '*.html' -o -name '*.pdf' \) -type f 2>/dev/null | grep -v '(' | sort -u); do
             NAME=$(basename "$f" .html | sed 's/-/ /g; s/\b\(.\)/\u\1/g')
             DIFFS=$(echo "$DIFFS" | jq --arg n "$NAME" --arg p "${f#$GEN/}" '. + [{"name":$n,"path":$p}]')
           done
