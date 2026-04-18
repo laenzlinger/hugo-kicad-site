@@ -1,5 +1,5 @@
 {{ partial "version-picker.html" . }}
 <div class="footer-meta">
-{{ with .Site.Params.oshwaID }}<a class="footer-badge" href="https://certification.oshwa.org/{{ . | lower }}.html">OSHWA {{ . }}</a>{{ end }}
-{{ with .Site.Params.license }}<span class="footer-license">License: {{ . }}</span>{{ end }}
+{{ with .Site.Params.oshwaID }}<a href="https://certification.oshwa.org/{{ . | lower }}.html"><img src="https://img.shields.io/badge/OSHWA-{{ . }}-blue" alt="OSHWA {{ . }}"></a>{{ end }}
+{{ with .Site.Params.license }}<img src="https://img.shields.io/badge/License-{{ . | replaceRE `[-.]` "--" }}-green" alt="License: {{ . }}">{{ end }}
 </div>
