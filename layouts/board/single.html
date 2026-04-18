@@ -6,7 +6,6 @@
   </header>
   <div class="post-content md-content">
 
-  <script type="module" src="https://kicanvas.org/kicanvas/kicanvas.js"></script>
   <h2>Schematic &amp; PCB</h2>
   <div class="viewer-wrap">
     {{ partial "fullscreen-btn.html" . }}
@@ -22,6 +21,7 @@
     v.setAttribute('theme', 'kicad');
     v.setAttribute('controlslist', 'nooverlay');
   </script>
+  <script type="module" src="https://kicanvas.org/kicanvas/kicanvas.js"></script>
 
   {{ $renders := .Site.Params.renders }}
   {{ with $renders }}

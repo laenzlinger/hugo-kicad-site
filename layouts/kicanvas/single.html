@@ -7,7 +7,6 @@
   <div class="post-content md-content">
 
   {{ .Content }}
-  <script type="module" src="https://kicanvas.org/kicanvas/kicanvas.js"></script>
   <div class="viewer-wrap">
     {{ partial "fullscreen-btn.html" . }}
     <kicanvas-embed id="kicanvas-viewer">
@@ -22,6 +21,7 @@
     v.setAttribute('theme', 'kicad');
     v.setAttribute('controlslist', 'nooverlay');
   </script>
+  <script type="module" src="https://kicanvas.org/kicanvas/kicanvas.js"></script>
   </div>
 </article>
 {{ end }}
