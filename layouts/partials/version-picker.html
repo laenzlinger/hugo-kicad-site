@@ -14,12 +14,15 @@
         sel.innerHTML = versions.map(function(v) {
           var tag = (typeof v === 'string') ? v : v.tag;
           var label = tag;
+          var url = (typeof v === 'object' && v.url) ? v.url : '';
           if (typeof v === 'object' && v.latest && tag !== 'latest') label += ' (latest)';
           var selected = baseURL.indexOf('/' + tag + '/') !== -1 ? ' selected' : '';
-          return '<option value="' + tag + '"' + selected + '>' + label + '</option>';
+          return '<option value="' + tag + '"' + selected + (url ? ' data-url="' + url + '"' : '') + '>' + label + '</option>';
         }).join('');
         sel.addEventListener('change', function() {
-          window.location.href = root + '/' + sel.value + '/' + path;
+          var opt = sel.options[sel.selectedIndex];
+          var url = opt.dataset.url;
+          window.location.href = url ? url : root + '/' + sel.value + '/' + path;
         });
         var target = document.querySelector('.logo-switches');
         if (target) target.appendChild(sel);
