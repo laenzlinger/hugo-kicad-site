@@ -28,12 +28,12 @@
     document.querySelectorAll('.viewer-placeholder').forEach(function(ph) {
       ph.querySelector('.viewer-load-btn').addEventListener('click', function() {
         var el = document.getElementById(ph.dataset.viewerId);
-        el.setAttribute('model', ph.dataset.model);
-        el.setAttribute('edgesettings', 'on,40,40,40,1');
-        el.setAttribute('backgroundcolor', '255,255,255,255');
         el.style.display = 'block';
         ph.style.display = 'none';
-        OV.Init3DViewerElements();
+        OV.Init3DViewerFromUrlList(el, [ph.dataset.model], {
+          backgroundColor: new OV.RGBAColor(255, 255, 255, 255),
+          edgeSettings: new OV.EdgeSettings(true, new OV.RGBColor(40, 40, 40), 1)
+        });
       });
     });
   </script>
