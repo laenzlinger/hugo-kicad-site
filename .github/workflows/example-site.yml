@@ -17,5 +17,6 @@ jobs:
       schematic: "Arduino_Uno.kicad_sch"
       pcb: "Arduino_Uno.kicad_pcb"
       kicad_dir: "example"
+      kibot_config: "Arduino_Uno.kibot.yaml"
       site_dir: "exampleSite"
       site_base_url: "https://laenzlinger.github.io/hugo-kicad-site"

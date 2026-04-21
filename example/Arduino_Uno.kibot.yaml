@@ -1,0 +1,43 @@
+kibot:
+  version: 1
+
+outputs:
+  - name: board_top
+    type: render_3d
+    dir: 3D
+    options:
+      download: true
+      rotate_x: 3
+      rotate_z: 2
+      ray_tracing: true
+      output: "%f-3D-top.png"
+
+  - name: board_bottom
+    type: render_3d
+    dir: 3D
+    options:
+      download: true
+      rotate_x: 3
+      rotate_z: -2
+      view: bottom
+      ray_tracing: true
+      output: "%f-3D-bottom.png"
+
+  - name: schematic
+    type: pdf_sch_print
+    dir: Schematic
+    options:
+      output: "%f-schematic.pdf"
+
+  - name: bom
+    type: bom
+    dir: BoM
+    options:
+      format: HTML
+      output: "%f-bom.html"
+
+  - name: ibom
+    type: ibom
+    dir: BoM
+    options:
+      output: "%f-ibom.html"
