@@ -11,7 +11,7 @@ params:
   description: "Example site demonstrating the hugo-kicad-site theme"
   repoURL: "https://github.com/laenzlinger/hugo-kicad-site"
   license: "GPL-3.0-or-later"
-  # oshwaID: "CH000023"
+  oshwaID: "IT000007"
   version: "main"
   renders: []
   downloads: []
@@ -33,3 +33,6 @@ menu:
     - name: Assembly
       url: /assembly/
       weight: 45
+    - name: Design Notes
+      url: /design-notes/
+      weight: 50
