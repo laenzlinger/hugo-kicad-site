@@ -198,15 +198,15 @@ jobs:
           fi
 
           # Build config override with dynamic params
-          cat > "${SITE}/config_override.yaml" <<EOF
-baseURL: ${BASE}
-params:
-  version: "${VERSION}"
-  kicadFiles: ${KICAD_FILES}
-  renders: ${RENDERS_JSON}
-  downloads: ${DOWNLOADS}
-  diffs: ${DIFFS_JSON}
-EOF
+          {
+            echo "baseURL: ${BASE}"
+            echo "params:"
+            echo "  version: \"${VERSION}\""
+            echo "  kicadFiles: ${KICAD_FILES}"
+            echo "  renders: ${RENDERS_JSON}"
+            echo "  downloads: ${DOWNLOADS}"
+            echo "  diffs: ${DIFFS_JSON}"
+          } > "${SITE}/config_override.yaml"
           if [ -n "$IBOM_PATH" ]; then
             echo "  ibom: \"${IBOM_PATH}\"" >> "${SITE}/config_override.yaml"
           fi
