@@ -30,3 +30,6 @@ menu:
     - name: Release
       url: /release/
       weight: 30
+    - name: Assembly
+      url: /assembly/
+      weight: 45

@@ -20,3 +20,5 @@ jobs:
       kibot_config: "Arduino_Uno.kibot.yaml"
       site_dir: "exampleSite"
       site_base_url: "https://laenzlinger.github.io/hugo-kicad-site"
+      assembly_dir: "example/generated/Assembly"
+      remove_step_file: false

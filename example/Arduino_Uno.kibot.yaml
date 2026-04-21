@@ -41,3 +41,10 @@ outputs:
     dir: BoM
     options:
       output: "%f-ibom.html"
+
+  - name: step
+    type: step
+    dir: Assembly
+    options:
+      download: true
+      output: "assembly-pcb.step"
