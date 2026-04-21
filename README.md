@@ -105,7 +105,7 @@ See [docs/ci.md](docs/ci.md) for GitHub Actions integration.
 
 ## License
 
-MIT
+GPL-3.0-or-later
 
 ## Credits
 
