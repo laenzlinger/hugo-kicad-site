@@ -175,8 +175,8 @@ jobs:
           # Order: root schematic first, then remaining schematics, then PCB
           KICAD_FILES=$(cd "${SITE}/static/kicad" && {
             [ -f "${{ inputs.schematic }}" ] && echo "${{ inputs.schematic }}"
-            ls *.kicad_sch 2>/dev/null | grep -v "^${{ inputs.schematic }}$"
-            ls *.kicad_pcb 2>/dev/null
+            ls *.kicad_sch 2>/dev/null | grep -v "^${{ inputs.schematic }}$" || true
+            ls *.kicad_pcb 2>/dev/null || true
           } | jq -R . | jq -s -c .)
 
           # Copy assembly models (STEP/GLB/3MF)
