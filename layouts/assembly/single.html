@@ -30,11 +30,7 @@
         var el = document.getElementById(ph.dataset.viewerId);
         el.style.display = 'block';
         ph.style.display = 'none';
-        OV.Init3DViewerFromUrlList(el, [ph.dataset.model], {
-          backgroundColor: new OV.RGBAColor(255, 255, 255, 255),
-          edgeSettings: new OV.EdgeSettings(true, new OV.RGBColor(40, 40, 40), 1),
-          defaultColor: new OV.RGBColor(200, 200, 200)
-        });
+        OV.Init3DViewerFromUrlList(el, [ph.dataset.model]);
       });
     });
   </script>
