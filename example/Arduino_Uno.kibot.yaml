@@ -74,3 +74,21 @@ outputs:
   - name: navigate
     type: navigate_results
     dir: Browse
+
+  - name: diff_sch
+    type: diff
+    dir: Diff
+    run_by_default: false
+    options:
+      old: HEAD~1
+      old_type: git
+      pcb: false
+
+  - name: diff_pcb
+    type: diff
+    dir: Diff
+    run_by_default: false
+    options:
+      old: HEAD~1
+      old_type: git
+      only_pcb: true
