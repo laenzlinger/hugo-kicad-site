@@ -11,7 +11,7 @@ params:
   description: "Example site demonstrating the hugo-kicad-site theme"
   repoURL: "https://github.com/laenzlinger/hugo-kicad-site"
   license: "GPL-3.0-or-later"
-  oshwaID: "CH000000X"
+  oshwaID: "CH00000X"
   version: "main"
   renders: []
   downloads: []
