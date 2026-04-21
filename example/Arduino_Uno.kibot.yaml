@@ -30,10 +30,10 @@ outputs:
       point_of_view:
         - rotate_x: 30
           rotate_z: -20
-          file_id: _blender_top
-        - rotate_x: -30
-          rotate_z: 20
-          file_id: _blender_bottom
+          file_id: _blender_1_top
+        - rotate_x: 210
+          rotate_z: -20
+          file_id: _blender_2_bottom
 
   - name: schematic
     type: pdf_sch_print
