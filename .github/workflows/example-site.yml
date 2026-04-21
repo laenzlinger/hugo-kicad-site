@@ -5,37 +5,17 @@ on:
     branches: [main]
 
 permissions:
+  contents: write
   pages: write
   id-token: write
 
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: jdx/mise-action@v4
-        with:
-          working_directory: exampleSite
-
-      - name: Build
-        working-directory: exampleSite
-        run: hugo --minify
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: exampleSite/public
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - id: deploy
-        uses: actions/deploy-pages@v4
+  site:
+    uses: ./.github/workflows/kicad-site.yml
+    with:
+      project_name: "Arduino_Uno"
+      schematic: "Arduino_Uno.kicad_sch"
+      pcb: "Arduino_Uno.kicad_pcb"
+      kicad_dir: "example"
+      site_dir: "exampleSite"
+      site_base_url: "https://laenzlinger.github.io/hugo-kicad-site"

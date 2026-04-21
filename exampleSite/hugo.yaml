@@ -15,9 +15,7 @@ params:
   version: "main"
   renders: []
   downloads: []
-  kicadFiles:
-    - Arduino_Uno.kicad_sch
-    - Arduino_Uno.kicad_pcb
+  kicadFiles: []
   # PaperMod params
   env: production
   socialIcons:
