@@ -1,7 +1,10 @@
 [
   {
-    "tag": "latest",
+    "tag": "v1.0.1",
     "latest": true
+  },
+  {
+    "tag": "latest"
   },
   {
     "tag": "v1.0.0"
