@@ -183,6 +183,15 @@ jobs:
           if [ -n "${{ inputs.assembly_dir }}" ] && [ -d "${{ inputs.assembly_dir }}" ]; then
             mkdir -p "${SITE}/static/assembly"
             find "${{ inputs.assembly_dir }}" -maxdepth 1 \( -name 'assembly-*.step' -o -name 'assembly-*.glb' -o -name 'assembly-*.3mf' -o -name 'assembly-*.png' \) -exec cp {} "${SITE}/static/assembly/" \;
+            # Auto-generate thumbnails from Blender renders for models without a preview
+            for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb "${SITE}"/static/assembly/assembly-*.3mf; do
+              [ -f "$model" ] || continue
+              thumb="${model%.*}.png"
+              if [ ! -f "$thumb" ] && [ -d "$GEN/3D" ]; then
+                first_render=$(find "$GEN/3D" -maxdepth 1 -name '*blender*.png' -o -name '*.png' 2>/dev/null | head -1)
+                [ -n "$first_render" ] && cp "$first_render" "$thumb"
+              fi
+            done
             # Only auto-discover names if assemblyModels is not already defined in hugo.yaml
             if ! grep -q 'assemblyModels:' "${SITE}/hugo.yaml" 2>/dev/null; then
               ASSEMBLY_MODELS=$(cd "${SITE}/static/assembly" && ls *.step *.glb *.3mf 2>/dev/null | jq -R '{name: (. | sub("assembly-";"") | sub("\\.(step|glb|3mf)$";"") | gsub("[-_]";" ")), file: .}' | jq -s -c .)
