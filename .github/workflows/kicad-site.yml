@@ -130,7 +130,7 @@ jobs:
           DL="[]"
           add() {
             local m=$(find "$GEN" -name "$2" -type f $3 2>/dev/null | head -1)
-            [ -n "$m" ] && DL=$(echo "$DL" | jq --arg n "$1" --arg p "${m#$GEN/}" '. + [{"name":$n,"path":$p}]')
+            [ -n "$m" ] && DL=$(echo "$DL" | jq --arg n "$1" --arg p "${m#$GEN/}" '. + [{"name":$n,"path":$p}]') || true
           }
           add "Schematic (PDF)" "*schematic*.pdf"
           add "BOM (HTML)" "*bom*.html" "! -name *ibom*"
