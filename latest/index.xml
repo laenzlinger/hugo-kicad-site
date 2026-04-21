@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Overview on Hugo KiCad Site — Demo</title><link>https://laenzlinger.github.io/hugo-kicad-site/latest/</link><description>Recent content in Overview on Hugo KiCad Site — Demo</description><generator>Hugo</generator><language>en-us</language><atom:link href="https://laenzlinger.github.io/hugo-kicad-site/latest/index.xml" rel="self" type="application/rss+xml"/><item><title>Release</title><link>https://laenzlinger.github.io/hugo-kicad-site/latest/release/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://laenzlinger.github.io/hugo-kicad-site/latest/release/</guid><description>&lt;p&gt;This page demonstrates the &lt;strong&gt;release&lt;/strong&gt; layout type. In a real project with tagged releases, it shows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A link to the GitHub release&lt;/li&gt;
+&lt;li&gt;Download links for Gerbers, BOM, schematics (PDF)&lt;/li&gt;
+&lt;li&gt;Visual diffs of schematic/PCB changes against the previous release&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;All assets are discovered automatically by the CI workflow.&lt;/p&gt;</description></item><item><title>Board</title><link>https://laenzlinger.github.io/hugo-kicad-site/latest/board/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://laenzlinger.github.io/hugo-kicad-site/latest/board/</guid><description>&lt;h2 id="about-this-example"&gt;About this example&lt;/h2&gt;
+&lt;p&gt;This page demonstrates the &lt;strong&gt;board&lt;/strong&gt; layout type, which combines:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;An interactive KiCanvas schematic/PCB viewer (above)&lt;/li&gt;
+&lt;li&gt;A 3D render gallery (when renders are available)&lt;/li&gt;
+&lt;li&gt;An interactive BOM viewer (when iBOM is available)&lt;/li&gt;
+&lt;li&gt;Custom markdown content (this section)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The KiCad files shown here are from the &lt;strong&gt;Arduino Uno Shield&lt;/strong&gt; template included with KiCad.&lt;/p&gt;
+&lt;p&gt;In a real project, 3D renders and the interactive BOM are generated automatically by &lt;a href="https://github.com/INTI-CMNB/KiBot"&gt;KiBot&lt;/a&gt; during CI.&lt;/p&gt;</description></item></channel></rss>
