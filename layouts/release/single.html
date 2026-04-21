@@ -28,17 +28,6 @@
       {{ end }}
     </ul>
     {{ end }}
-
-    {{ $diffs := .Site.Params.diffs }}
-    {{ with $diffs }}
-    <h2>Schematic &amp; PCB Diff</h2>
-    <p>Visual diff against the previous release:</p>
-    <ul class="download-list">
-      {{ range . }}
-      <li><a href="{{ $.Site.BaseURL }}{{ .path }}">{{ .name }}</a></li>
-      {{ end }}
-    </ul>
-    {{ end }}
   {{ else }}
     <p>Release information is available for tagged versions. Use the version picker to select a release, or browse all releases on GitHub:</p>
     {{ with .Site.Params.repoURL }}
@@ -50,6 +39,17 @@
       </div>
     </a>
     {{ end }}
+  {{ end }}
+
+  {{ $diffs := .Site.Params.diffs }}
+  {{ with $diffs }}
+  <h2>Schematic &amp; PCB Diff</h2>
+  <p>Visual diff against the previous release:</p>
+  <ul class="download-list">
+    {{ range . }}
+    <li><a href="{{ $.Site.BaseURL }}{{ .path }}">{{ .name }}</a></li>
+    {{ end }}
+  </ul>
   {{ end }}
   </div>
 </article>
