@@ -5,19 +5,9 @@
     <div class="post-meta"></div>
   </header>
   <div class="post-content md-content">
-
   {{ .Content }}
-  {{ $renders := .Site.Params.renders }}
-  {{ with $renders }}
-  <div class="gallery-grid">
-    {{ range . }}
-    <figure>
-      <img src="{{ $.Site.BaseURL }}3D/{{ . }}" alt="{{ . | replaceRE `[-_]` " " | replaceRE `\.png$` "" }}" loading="lazy">
-      <figcaption>{{ . | replaceRE `[-_]` " " | replaceRE `\.png$` "" }}</figcaption>
-    </figure>
-    {{ end }}
-  </div>
-  {{ else }}
+  {{ partial "gallery.html" . }}
+  {{ if not .Site.Params.renders }}
   <p>No renders available for this version.</p>
   {{ end }}
   </div>

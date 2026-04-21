@@ -43,12 +43,19 @@ jobs:
 | `kibot_config` | `""` | KiBot config filename |
 | `container_image` | `ghcr.io/inti-cmnb/kicad9_auto_full:latest` | KiCad container |
 | `kibot_install` | `""` | Custom KiBot install command (for containers without KiBot) |
-| `site_dir` | `site` | Directory with Hugo site |
-| `hugo_version` | `0.160.1` | Hugo version |
+| `site_dir` | `site` | Directory with Hugo site (must contain `.mise.toml`) |
 | `remove_step_file` | `true` | Remove large STEP file |
 | `assembly_dir` | `""` | Directory containing assembly 3D models (STEP/GLB) |
 
 ## How it works
+
+Hugo and Go versions are managed via [mise](https://mise.jdx.dev/). Your `site_dir` must contain a `.mise.toml`:
+
+```toml
+[tools]
+hugo = "0.160.1"
+go = "1.26"
+```
 
 1. KiBot generates assets (Gerbers, BOM, iBOM, 3D renders, schematics)
 2. CI discovers renders (`.png` in `3D/`) and downloads (BOM, Gerbers, etc.)

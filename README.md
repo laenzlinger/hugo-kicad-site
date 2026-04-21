@@ -49,6 +49,7 @@ pedalboard-hw/
 ├── pedalboard-hw.kicad_pcb
 ├── pedalboard-hw.kibot.yaml
 └── site/
+    ├── .mise.toml
     ├── hugo.yaml
     └── content/
         ├── _index.md         ← overview (custom markdown)
@@ -57,7 +58,17 @@ pedalboard-hw/
         └── my-custom-page.md ← any additional content
 ```
 
-### 2. Configure hugo.yaml
+### 2. Add `.mise.toml`
+
+Pin Hugo and Go versions in `site/.mise.toml`:
+
+```toml
+[tools]
+hugo = "0.160.1"
+go = "1.26"
+```
+
+### 3. Configure hugo.yaml
 
 ```yaml
 module:
@@ -71,7 +82,7 @@ params:
 
 See [exampleSite/hugo.yaml](exampleSite/hugo.yaml) for all parameters.
 
-### 3. Add content pages
+### 4. Add content pages
 
 Built-in page types (set via `type` in front matter):
 
@@ -88,7 +99,7 @@ Built-in page types (set via `type` in front matter):
 
 Custom pages are plain markdown — add as many as you need.
 
-### 4. Set up CI
+### 5. Set up CI
 
 See [docs/ci.md](docs/ci.md) for GitHub Actions integration.
 

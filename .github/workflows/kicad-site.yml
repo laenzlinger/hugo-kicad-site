@@ -39,10 +39,6 @@ on:
         description: "Base URL of the GitHub Pages site (e.g. https://pedalboard.github.io/pedalboard-hw)"
         required: true
         type: string
-      hugo_version:
-        description: "Hugo version"
-        type: string
-        default: "0.160.1"
       remove_step_file:
         description: "Remove large STEP file from output"
         type: boolean
@@ -109,11 +105,9 @@ jobs:
           done
 
       - name: Install Hugo and Go
-        run: |
-          wget -q "https://go.dev/dl/go1.26.2.linux-amd64.tar.gz" -O /tmp/go.tar.gz
-          tar -xzf /tmp/go.tar.gz -C /usr/local
-          wget -q "https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugo_version }}/hugo_extended_${{ inputs.hugo_version }}_linux-amd64.tar.gz" -O /tmp/hugo.tar.gz
-          tar -xzf /tmp/hugo.tar.gz -C /usr/local/bin hugo
+        uses: jdx/mise-action@v4
+        with:
+          working_directory: ${{ inputs.site_dir }}
 
       - name: Discover assets
         id: assets
@@ -160,7 +154,10 @@ jobs:
 
       - name: Build Hugo site
         env:
-          PATH: "/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin"
+          RENDERS_JSON: ${{ steps.assets.outputs.renders }}
+          DOWNLOADS_JSON: ${{ steps.assets.outputs.downloads }}
+          DIFFS_JSON: ${{ steps.assets.outputs.diffs }}
+          IBOM_PATH: ${{ steps.assets.outputs.ibom }}
         run: |
           TAG="${{ steps.ver.outputs.tag }}"
           VERSION="$TAG"
@@ -197,15 +194,25 @@ jobs:
           if [ "$TAG" = "latest" ]; then
             DOWNLOADS='[]'
           else
-            DOWNLOADS='${{ steps.assets.outputs.downloads }}'
+            DOWNLOADS="$DOWNLOADS_JSON"
           fi
-          DIFFS='${{ steps.assets.outputs.diffs }}'
 
           # Build config override with dynamic params
-          OVERRIDE="baseURL: ${BASE}\nparams:\n  version: \"${VERSION}\"\n  kicadFiles: ${KICAD_FILES}\n  renders: ${{ steps.assets.outputs.renders }}\n  downloads: ${DOWNLOADS}\n  diffs: ${DIFFS}"
-          [ -n "${{ steps.assets.outputs.ibom }}" ] && OVERRIDE="${OVERRIDE}\n  ibom: \"${{ steps.assets.outputs.ibom }}\""
-          [ "$ASSEMBLY_MODELS" != "[]" ] && OVERRIDE="${OVERRIDE}\n  assemblyModels: ${ASSEMBLY_MODELS}"
-          printf "$OVERRIDE\n" > "${SITE}/config_override.yaml"
+          cat > "${SITE}/config_override.yaml" <<EOF
+baseURL: ${BASE}
+params:
+  version: "${VERSION}"
+  kicadFiles: ${KICAD_FILES}
+  renders: ${RENDERS_JSON}
+  downloads: ${DOWNLOADS}
+  diffs: ${DIFFS_JSON}
+EOF
+          if [ -n "$IBOM_PATH" ]; then
+            echo "  ibom: \"${IBOM_PATH}\"" >> "${SITE}/config_override.yaml"
+          fi
+          if [ "$ASSEMBLY_MODELS" != "[]" ]; then
+            echo "  assemblyModels: ${ASSEMBLY_MODELS}" >> "${SITE}/config_override.yaml"
+          fi
 
           cd "$SITE"
           hugo mod get

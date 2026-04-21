@@ -7,34 +7,12 @@
   <div class="post-content md-content">
 
   <h2>Schematic &amp; PCB</h2>
-  <div class="viewer-wrap">
-    {{ partial "fullscreen-btn.html" . }}
-    <kicanvas-embed id="kicanvas-viewer">
-      {{ range .Site.Params.kicadFiles }}
-      <kicanvas-source src="{{ $.Site.BaseURL }}kicad/{{ . }}"></kicanvas-source>
-      {{ end }}
-    </kicanvas-embed>
-  </div>
-  <script>
-    var v = document.getElementById('kicanvas-viewer');
-    v.setAttribute('controls', 'full');
-    v.setAttribute('theme', 'kicad');
-    v.setAttribute('controlslist', 'nooverlay');
-  </script>
-  <script type="module" src="https://kicanvas.org/kicanvas/kicanvas.js"></script>
+  {{ partial "kicanvas.html" . }}
 
-  {{ $renders := .Site.Params.renders }}
-  {{ with $renders }}
+  {{ with .Site.Params.renders }}
   <h2>3D Renders</h2>
-  <div class="gallery-grid">
-    {{ range . }}
-    <figure>
-      <img src="{{ $.Site.BaseURL }}3D/{{ . }}" alt="{{ . | replaceRE `[-_]` " " | replaceRE `\.png$` "" }}" loading="lazy">
-      <figcaption>{{ . | replaceRE `[-_]` " " | replaceRE `\.png$` "" }}</figcaption>
-    </figure>
-    {{ end }}
-  </div>
   {{ end }}
+  {{ partial "gallery.html" . }}
 
   {{ with .Site.Params.ibom }}
   <h2>Interactive BOM</h2>
