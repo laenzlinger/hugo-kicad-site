@@ -20,6 +20,20 @@
     {{ partial "fullscreen-btn.html" $ }}
     <iframe class="ibom-viewer" src="{{ $.Site.BaseURL }}{{ . }}" title="Interactive BOM"></iframe>
   </div>
+  <script>
+    (function() {
+      var iframe = document.querySelector('.ibom-viewer');
+      function syncTheme() {
+        try {
+          var dark = document.documentElement.dataset.theme === 'dark';
+          var body = iframe.contentDocument.querySelector('.topmostdiv');
+          if (body) body.classList.toggle('dark', dark);
+        } catch(e) {}
+      }
+      iframe.addEventListener('load', syncTheme);
+      new MutationObserver(syncTheme).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+    })();
+  </script>
   {{ end }}
 
   {{ with .Content }}
