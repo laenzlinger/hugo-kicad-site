@@ -7,9 +7,10 @@ outputs:
     dir: 3D
     options:
       download: true
-      rotate_x: 3
-      rotate_z: 2
+      rotate_x: 2
+      rotate_z: 1
       ray_tracing: true
+      zoom: 4
       output: "%f-3D-top.png"
 
   - name: board_bottom
@@ -17,10 +18,11 @@ outputs:
     dir: 3D
     options:
       download: true
-      rotate_x: 3
-      rotate_z: -2
+      rotate_x: 2
+      rotate_z: -1
       view: bottom
       ray_tracing: true
+      zoom: 4
       output: "%f-3D-bottom.png"
 
   - name: schematic
@@ -54,7 +56,8 @@ outputs:
     dir: Assembly
     options:
       download: true
-      rotate_x: 3
-      rotate_z: 2
+      rotate_x: 2
+      rotate_z: 1
       ray_tracing: true
+      zoom: 4
       output: "assembly-pcb.png"
