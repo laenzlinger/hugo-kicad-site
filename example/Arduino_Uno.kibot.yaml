@@ -70,3 +70,7 @@ outputs:
       rotate_z: -20
       ray_tracing: true
       output: "assembly-pcb.png"
+
+  - name: navigate
+    type: navigate_results
+    dir: Browse
