@@ -72,8 +72,16 @@ jobs:
             eval "$KIBOT_INSTALL"
           fi
 
+      - name: Cache 3D models
+        uses: set-soft/cache@main
+        with:
+          path: ~/cache_3d
+          key: cache_3d
+
       - name: Run KiBot
         working-directory: ${{ inputs.kicad_dir }}
+        env:
+          KIBOT_3D_MODELS: /github/home/cache_3d
         run: |
           ARGS="-e ${{ inputs.schematic }} -d generated"
           [ -n "${{ inputs.pcb }}" ] && ARGS="-b ${{ inputs.pcb }} $ARGS"
@@ -95,6 +103,8 @@ jobs:
       - name: KiBot diffs
         working-directory: ${{ inputs.kicad_dir }}
         continue-on-error: true
+        env:
+          KIBOT_3D_MODELS: /github/home/cache_3d
         run: |
           BASE="-e ${{ inputs.schematic }} -d generated"
           [ -n "${{ inputs.pcb }}" ] && BASE="-b ${{ inputs.pcb }} $BASE"
