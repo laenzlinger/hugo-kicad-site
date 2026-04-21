@@ -48,3 +48,13 @@ outputs:
     options:
       download: true
       output: "assembly-pcb.step"
+
+  - name: assembly_render
+    type: render_3d
+    dir: Assembly
+    options:
+      download: true
+      rotate_x: 3
+      rotate_z: 2
+      ray_tracing: true
+      output: "assembly-pcb.png"
