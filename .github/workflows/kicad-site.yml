@@ -101,10 +101,12 @@ jobs:
         working-directory: ${{ inputs.kicad_dir }}
         continue-on-error: true
         run: |
-          ARGS="-e ${{ inputs.schematic }} -d generated -s run_erc,run_drc diff_sch diff_pcb basic_diff_sch basic_diff_pcb"
-          [ -n "${{ inputs.pcb }}" ] && ARGS="-b ${{ inputs.pcb }} $ARGS"
-          [ -n "${{ inputs.kibot_config }}" ] && ARGS="-c ${{ inputs.kibot_config }} $ARGS"
-          kibot $ARGS
+          BASE="-e ${{ inputs.schematic }} -d generated"
+          [ -n "${{ inputs.pcb }}" ] && BASE="-b ${{ inputs.pcb }} $BASE"
+          [ -n "${{ inputs.kibot_config }}" ] && BASE="-c ${{ inputs.kibot_config }} $BASE"
+          for target in diff_sch diff_pcb basic_diff_sch basic_diff_pcb; do
+            kibot $BASE -s run_erc,run_drc "$target" || true
+          done
 
       - name: Install Hugo and Go
         run: |
