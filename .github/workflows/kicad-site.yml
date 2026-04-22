@@ -26,7 +26,7 @@ on:
       container_image:
         description: "KiCad container image"
         type: string
-        default: "ghcr.io/inti-cmnb/kicad9_auto_full:latest"
+        default: "ghcr.io/inti-cmnb/kicad10_auto_full:dev"
       kibot_install:
         description: "Custom KiBot install command (e.g. pip install from dev branch). Leave empty if container already has KiBot."
         type: string
@@ -65,7 +65,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update -qq
-          apt-get install -y -qq python3-pip python3-lxml git rsync wget jq > /dev/null 2>&1
+          apt-get install -y -qq python3-pip python3-lxml git rsync wget jq kicad-packages3d > /dev/null 2>&1
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           KIBOT_INSTALL="${{ inputs.kibot_install }}"
           if [ -n "$KIBOT_INSTALL" ]; then
@@ -82,6 +82,7 @@ jobs:
         working-directory: ${{ inputs.kicad_dir }}
         env:
           KIBOT_3D_MODELS: /github/home/cache_3d
+          KICAD9_3DMODEL_DIR: /usr/share/kicad/3dmodels
           KICAD10_3DMODEL_DIR: /usr/share/kicad/3dmodels
         run: |
           ARGS="-e ${{ inputs.schematic }} -d generated"
@@ -106,6 +107,7 @@ jobs:
         continue-on-error: true
         env:
           KIBOT_3D_MODELS: /github/home/cache_3d
+          KICAD9_3DMODEL_DIR: /usr/share/kicad/3dmodels
           KICAD10_3DMODEL_DIR: /usr/share/kicad/3dmodels
         run: |
           BASE="-e ${{ inputs.schematic }} -d generated"
