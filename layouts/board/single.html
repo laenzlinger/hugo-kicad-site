@@ -6,13 +6,13 @@
   </header>
   <div class="post-content md-content">
 
-  <h2>Schematic &amp; PCB</h2>
-  {{ partial "kicanvas.html" . }}
-
   {{ with .Site.Params.renders }}
   <h2>3D Renders</h2>
   {{ end }}
   {{ partial "gallery.html" . }}
+
+  <h2>Schematic &amp; PCB</h2>
+  {{ partial "kicanvas.html" . }}
 
   {{ with .Site.Params.ibom }}
   <h2>Interactive BOM</h2>
