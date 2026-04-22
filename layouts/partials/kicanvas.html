@@ -1,7 +1,8 @@
 <div class="viewer-wrap">
   {{ partial "fullscreen-btn.html" . }}
-  <kicanvas-embed id="kicanvas-viewer">
-    {{ range .Site.Params.kicadFiles }}
+  {{ $files := .Site.Params.kicadFiles }}
+  <kicanvas-embed id="kicanvas-viewer" src="{{ $.Site.BaseURL }}kicad/{{ index $files 0 }}">
+    {{ range $files }}
     <kicanvas-source src="{{ $.Site.BaseURL }}kicad/{{ . }}"></kicanvas-source>
     {{ end }}
   </kicanvas-embed>
