@@ -172,6 +172,7 @@ jobs:
           DIFFS_JSON: ${{ steps.assets.outputs.diffs }}
           IBOM_PATH: ${{ steps.assets.outputs.ibom }}
         run: |
+          eval "$(/github/home/.local/share/mise/bin/mise env -s sh)" 2>/dev/null || true
           TAG="${{ steps.ver.outputs.tag }}"
           VERSION="$TAG"
           [ "$TAG" = "latest" ] && VERSION="main"
