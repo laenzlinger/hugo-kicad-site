@@ -201,7 +201,7 @@ jobs:
             NEED_SCREENSHOT=false
             for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
               [ -f "$model" ] || continue
-              [ ! -f "${model%.*}.png" ] && NEED_SCREENSHOT=true
+              [ ! -f "${model%.*}.png" ] && NEED_SCREENSHOT=true || true
             done
             if [ "$NEED_SCREENSHOT" = true ]; then
               npm install --no-save puppeteer > /dev/null 2>&1
