@@ -237,7 +237,7 @@ jobs:
           await page.screenshot({ path: output, type: 'png', omitBackground: true });
           console.log('Saved ' + output);
           await browser.close(); server.close();
-          SCREENSHOT_EOF
+SCREENSHOT_EOF
               for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
                 [ -f "$model" ] || continue
                 thumb="${model%.*}.png"
