@@ -82,6 +82,7 @@ jobs:
         working-directory: ${{ inputs.kicad_dir }}
         env:
           KIBOT_3D_MODELS: /github/home/cache_3d
+          KICAD10_3DMODEL_DIR: /usr/share/kicad/3dmodels
         run: |
           ARGS="-e ${{ inputs.schematic }} -d generated"
           [ -n "${{ inputs.pcb }}" ] && ARGS="-b ${{ inputs.pcb }} $ARGS"
@@ -105,6 +106,7 @@ jobs:
         continue-on-error: true
         env:
           KIBOT_3D_MODELS: /github/home/cache_3d
+          KICAD10_3DMODEL_DIR: /usr/share/kicad/3dmodels
         run: |
           BASE="-e ${{ inputs.schematic }} -d generated"
           [ -n "${{ inputs.pcb }}" ] && BASE="-b ${{ inputs.pcb }} $BASE"
