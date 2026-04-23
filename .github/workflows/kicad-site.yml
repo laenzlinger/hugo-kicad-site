@@ -137,14 +137,15 @@ jobs:
             [ ! -f "${model%.*}.png" ] && NEED_SCREENSHOT=true && break
           done
           if [ "$NEED_SCREENSHOT" = true ]; then
-            npm install --no-save puppeteer > /dev/null 2>&1
-            wget -q -O /tmp/screenshot.mjs https://raw.githubusercontent.com/laenzlinger/hugo-kicad-site/main/scripts/assembly-screenshot.mjs
+            pip install -q playwright > /dev/null 2>&1
+            playwright install --with-deps chromium > /dev/null 2>&1
+            wget -q -O /tmp/screenshot.py https://raw.githubusercontent.com/laenzlinger/hugo-kicad-site/main/scripts/assembly-screenshot.py
             for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
               [ -f "$model" ] || continue
               thumb="${model%.*}.png"
               if [ ! -f "$thumb" ]; then
                 echo "Rendering thumbnail for $(basename $model)..."
-                node /tmp/screenshot.mjs "$model" "$thumb" || true
+                python3 /tmp/screenshot.py "$model" "$thumb" || true
               fi
             done
           fi
