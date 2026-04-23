@@ -1,3 +1,6 @@
 public/
 resources/
 .hugo_build.lock
+example/.history/
+example/*-backups/
+example/*.kicad_prl
