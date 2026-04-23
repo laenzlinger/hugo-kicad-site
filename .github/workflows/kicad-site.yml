@@ -73,7 +73,7 @@ jobs:
           fi
           if [ -n "${{ inputs.assembly_dir }}" ]; then
             pip install -q playwright > /dev/null 2>&1
-            playwright install --with-deps chromium > /dev/null 2>&1
+            playwright install --with-deps chromium > /dev/null 2>&1 || true
           fi
 
       - name: Cache 3D models
