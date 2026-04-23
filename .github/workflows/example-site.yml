@@ -23,3 +23,4 @@ jobs:
       site_base_url: "https://laenzlinger.github.io/hugo-kicad-site"
       assembly_dir: "example"
       remove_step_file: false
+
