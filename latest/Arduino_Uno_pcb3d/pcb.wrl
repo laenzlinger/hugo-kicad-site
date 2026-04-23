@@ -6,6 +6,42 @@ Transform {
   scale 0.00254 0.00254 0.00254
   children [
 Transform {
+  rotation 0 0 1 1.5708
+  translation 50.3701 -38.3701 0.314961
+  scale 1 1 1
+  children [
+    Inline {
+      url "components/PinSocket_1x08_P2.54mm_Vertical.wrl"
+    } ]
+  }
+Transform {
+  rotation 0 0 1 1.5708
+  translation 59.3701 -38.3701 0.314961
+  scale 1 1 1
+  children [
+    Inline {
+      url "components/PinSocket_1x06_P2.54mm_Vertical.wrl"
+    } ]
+  }
+Transform {
+  rotation 0 0 1 1.5708
+  translation 46.7701 -19.3701 0.314961
+  scale 1 1 1
+  children [
+    Inline {
+      url "components/PinSocket_1x10_P2.54mm_Vertical.wrl"
+    } ]
+  }
+Transform {
+  rotation 0 0 1 1.5708
+  translation 57.3701 -19.3701 0.314961
+  scale 1 1 1
+  children [
+    Inline {
+      url "components/PinSocket_1x08_P2.54mm_Vertical.wrl"
+    } ]
+  }
+Transform {
   children [
     Group {
       children [
