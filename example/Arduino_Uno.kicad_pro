@@ -1,0 +1,16 @@
+{
+  "board": {
+    "design_settings": {
+      "defaults": {}
+    }
+  },
+  "schematic": {
+    "drawing": {
+      "default_line_thickness": 6.0,
+      "default_text_size": 50.0
+    }
+  },
+  "text_variables": {
+    "REFERENCE": "Arduino Uno Example"
+  }
+}
