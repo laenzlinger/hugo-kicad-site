@@ -12,15 +12,14 @@
     {{ with .Site.Params.repoURL }}
     {{ partial "release-card.html" (dict "href" (printf "%s/releases/tag/%s" . $version) "title" (printf "Release notes for %s" $version)) }}
     {{ end }}
-    {{ partial "diffs.html" . }}
-    {{ if not .Site.Params.diffs }}
-    <p>No diffs available (first release or diff generation failed).</p>
-    {{ end }}
   {{ else }}
-    <p>Changes are shown for released versions only.</p>
     {{ with .Site.Params.repoURL }}
     {{ partial "release-card.html" (dict "href" (printf "%s/releases" .) "title" "All releases") }}
     {{ end }}
+  {{ end }}
+  {{ partial "diffs.html" . }}
+  {{ if not .Site.Params.diffs }}
+  <p>No diffs available.</p>
   {{ end }}
   </div>
 </article>
