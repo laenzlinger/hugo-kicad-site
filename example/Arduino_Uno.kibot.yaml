@@ -70,7 +70,7 @@ outputs:
     dir: Diff
     run_by_default: false
     options:
-      old: HEAD~1
+      old: v1.0.3
       old_type: git
       pcb: false
 
@@ -79,6 +79,6 @@ outputs:
     dir: Diff
     run_by_default: false
     options:
-      old: HEAD~1
+      old: v1.0.3
       old_type: git
       only_pcb: true
