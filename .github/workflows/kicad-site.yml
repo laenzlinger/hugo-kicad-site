@@ -71,10 +71,6 @@ jobs:
           if [ -n "$KIBOT_INSTALL" ]; then
             eval "$KIBOT_INSTALL"
           fi
-          if [ -n "${{ inputs.assembly_dir }}" ]; then
-            pip install -q playwright > /dev/null 2>&1
-            playwright install --with-deps chromium > /dev/null 2>&1 || true
-          fi
 
       - name: Cache 3D models
         uses: set-soft/cache@main
@@ -135,14 +131,23 @@ jobs:
           mkdir -p "${SITE}/static/assembly"
           find "$ASSEMBLY_DIR" -maxdepth 1 \( -name 'assembly-*.step' -o -name 'assembly-*.glb' -o -name 'assembly-*.3mf' -o -name 'assembly-*.png' \) -exec cp {} "${SITE}/static/assembly/" \;
           wget -q -O /tmp/screenshot.py https://raw.githubusercontent.com/laenzlinger/hugo-kicad-site/main/scripts/assembly-screenshot.py
+          NEED_SCREENSHOT=false
           for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
             [ -f "$model" ] || continue
-            thumb="${model%.*}.png"
-            if [ ! -f "$thumb" ]; then
-              echo "Rendering thumbnail for $(basename $model)..."
-              python3 /tmp/screenshot.py "$model" "$thumb" || true
-            fi
+            if [ ! -f "${model%.*}.png" ]; then NEED_SCREENSHOT=true; break; fi
           done
+          if [ "$NEED_SCREENSHOT" = true ]; then
+            pip install -q playwright > /dev/null 2>&1 || true
+            playwright install --with-deps chromium > /dev/null 2>&1 || true
+            for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
+              [ -f "$model" ] || continue
+              thumb="${model%.*}.png"
+              if [ ! -f "$thumb" ]; then
+                echo "Rendering thumbnail for $(basename $model)..."
+                python3 /tmp/screenshot.py "$model" "$thumb" || true
+              fi
+            done
+          fi
 
       - name: Discover assets
         id: assets
