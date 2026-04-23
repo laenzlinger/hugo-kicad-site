@@ -138,7 +138,12 @@ jobs:
           done
           if [ "$NEED_SCREENSHOT" = true ]; then
             pip install -q --break-system-packages playwright > /dev/null 2>&1 || true
+            if [ -d /github/home/cache_playwright ]; then
+              cp -r /github/home/cache_playwright/* /root/.cache/ms-playwright/ 2>/dev/null || true
+            fi
             playwright install --with-deps chromium > /dev/null 2>&1 || true
+            mkdir -p /github/home/cache_playwright
+            cp -r /root/.cache/ms-playwright/* /github/home/cache_playwright/ 2>/dev/null || true
             for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
               [ -f "$model" ] || continue
               thumb="${model%.*}.png"
@@ -148,6 +153,13 @@ jobs:
               fi
             done
           fi
+
+      - name: Cache Playwright browsers
+        if: inputs.assembly_dir != ''
+        uses: set-soft/cache@main
+        with:
+          path: /github/home/cache_playwright
+          key: cache_playwright
 
       - name: Discover assets
         id: assets
