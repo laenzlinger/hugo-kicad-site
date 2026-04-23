@@ -122,6 +122,33 @@ jobs:
         with:
           working_directory: ${{ inputs.site_dir }}
 
+      - name: Prepare assembly models
+        if: inputs.assembly_dir != ''
+        run: |
+          SITE="${{ inputs.site_dir }}"
+          ASSEMBLY_DIR="${{ inputs.assembly_dir }}"
+          [ -d "$ASSEMBLY_DIR" ] || exit 0
+          mkdir -p "${SITE}/static/assembly"
+          find "$ASSEMBLY_DIR" -maxdepth 1 \( -name 'assembly-*.step' -o -name 'assembly-*.glb' -o -name 'assembly-*.3mf' -o -name 'assembly-*.png' \) -exec cp {} "${SITE}/static/assembly/" \;
+          # Generate thumbnails for models without a PNG
+          NEED_SCREENSHOT=false
+          for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
+            [ -f "$model" ] || continue
+            [ ! -f "${model%.*}.png" ] && NEED_SCREENSHOT=true && break
+          done
+          if [ "$NEED_SCREENSHOT" = true ]; then
+            npm install --no-save puppeteer > /dev/null 2>&1
+            wget -q -O /tmp/screenshot.mjs https://raw.githubusercontent.com/laenzlinger/hugo-kicad-site/main/scripts/assembly-screenshot.mjs
+            for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
+              [ -f "$model" ] || continue
+              thumb="${model%.*}.png"
+              if [ ! -f "$thumb" ]; then
+                echo "Rendering thumbnail for $(basename $model)..."
+                node /tmp/screenshot.mjs "$model" "$thumb" || true
+              fi
+            done
+          fi
+
       - name: Discover assets
         id: assets
         run: |
@@ -192,21 +219,9 @@ jobs:
             ls *.kicad_pcb 2>/dev/null || true
           } | jq -R . | jq -s -c .)
 
-          # Copy assembly models (STEP/GLB/3MF)
+          # Discover assembly models (files already copied by Prepare step)
           ASSEMBLY_MODELS="[]"
-          if [ -n "${{ inputs.assembly_dir }}" ] && [ -d "${{ inputs.assembly_dir }}" ]; then
-            mkdir -p "${SITE}/static/assembly"
-            find "${{ inputs.assembly_dir }}" -maxdepth 1 \( -name 'assembly-*.step' -o -name 'assembly-*.glb' -o -name 'assembly-*.3mf' -o -name 'assembly-*.png' \) -exec cp {} "${SITE}/static/assembly/" \;
-            # Auto-generate thumbnails from Blender renders for models without a preview
-            for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb "${SITE}"/static/assembly/assembly-*.3mf; do
-              [ -f "$model" ] || continue
-              thumb="${model%.*}.png"
-              if [ ! -f "$thumb" ] && [ -d "$GEN/3D" ]; then
-                first_render=$(find "$GEN/3D" -maxdepth 1 -name '*blender*.png' -o -name '*.png' 2>/dev/null | head -1)
-                [ -n "$first_render" ] && cp "$first_render" "$thumb"
-              fi
-            done
-            # Only auto-discover names if assemblyModels is not already defined in hugo.yaml
+          if [ -d "${SITE}/static/assembly" ]; then
             if ! grep -q 'assemblyModels:' "${SITE}/hugo.yaml" 2>/dev/null; then
               ASSEMBLY_MODELS=$(cd "${SITE}/static/assembly" && ls *.step *.glb *.3mf 2>/dev/null | jq -R '{name: (. | sub("assembly-";"") | sub("\\.(step|glb|3mf)$";"") | gsub("[-_]";" ")), file: .}' | jq -s -c .)
             fi
