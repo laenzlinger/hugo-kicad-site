@@ -137,7 +137,7 @@ jobs:
             if [ ! -f "${model%.*}.png" ]; then NEED_SCREENSHOT=true; break; fi
           done
           if [ "$NEED_SCREENSHOT" = true ]; then
-            pip install -q playwright > /dev/null 2>&1 || true
+            pip install -q --break-system-packages playwright > /dev/null 2>&1 || true
             playwright install --with-deps chromium > /dev/null 2>&1 || true
             for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
               [ -f "$model" ] || continue
