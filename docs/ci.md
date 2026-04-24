@@ -41,7 +41,7 @@ jobs:
 | `pcb` | `""` | KiCad PCB filename |
 | `kicad_dir` | `.` | Directory containing KiCad files |
 | `kibot_config` | `""` | KiBot config filename |
-| `container_image` | `ghcr.io/inti-cmnb/kicad9_auto_full:latest` | KiCad container |
+| `container_image` | `ghcr.io/inti-cmnb/kicad10_auto_full:dev` | KiCad container |
 | `kibot_install` | `""` | Custom KiBot install command (for containers without KiBot) |
 | `site_dir` | `site` | Directory with Hugo site (must contain `.mise.toml`) |
 | `remove_step_file` | `true` | Remove large STEP file |

@@ -15,12 +15,23 @@ ENV_MAP = ",".join(ENV_BASE + f for f in ["posx.jpg","negx.jpg","posy.jpg","negy
 
 HTML = f"""<!DOCTYPE html><html><head>
 <script src="https://cdn.jsdelivr.net/npm/online-3d-viewer@0.18.0/build/engine/o3dv.min.js"></script>
-<style>body{{margin:0;overflow:hidden}} .online_3d_viewer{{width:2560px;height:1440px}}</style>
+<style>body{{margin:0;overflow:hidden}} #viewer{{width:2560px;height:1440px}}</style>
 </head><body>
-<div class="online_3d_viewer" model="http://localhost:8765/{model.name}"
-     edgesettings="on,40,40,40,1" backgroundcolor="255,255,255,0"
-     environmentmap="{ENV_MAP}"></div>
-<script>window.addEventListener('load',function(){{OV.Init3DViewerElements();setTimeout(function(){{document.title="ready"}},45000)}});</script>
+<div id="viewer"></div>
+<script>
+window.addEventListener('load', function() {{
+  var viewer = new OV.EmbeddedViewer(document.getElementById('viewer'), {{
+    backgroundColor: new OV.RGBAColor(255, 255, 255, 0),
+    edgeSettings: new OV.EdgeSettings(true, new OV.RGBColor(40, 40, 40), 1),
+    environmentSettings: new OV.EnvironmentSettings(
+      ["{ENV_MAP.replace(',', '","')}"], false
+    ),
+    onModelLoaded: function() {{ document.title = "ready"; }},
+    onModelLoadFailed: function() {{ document.title = "failed"; }}
+  }});
+  viewer.LoadModelFromUrlList(["http://localhost:8765/{model.name}"]);
+}});
+</script>
 </body></html>"""
 
 class Handler(SimpleHTTPRequestHandler):
@@ -45,7 +56,12 @@ with sync_playwright() as p:
     browser = p.chromium.launch(args=["--no-sandbox"])
     page = browser.new_page(viewport={"width": 2560, "height": 1440})
     page.goto("http://localhost:8765/", wait_until="networkidle")
-    page.wait_for_function("document.title === 'ready'", timeout=60000)
+    page.wait_for_function("document.title === 'ready' || document.title === 'failed'", timeout=120000)
+    if page.title() == "failed":
+        print(f"Error: model load failed for {model.name}", file=sys.stderr)
+        browser.close()
+        server.shutdown()
+        sys.exit(1)
     page.wait_for_timeout(3000)
     page.screenshot(path=output, type="png", omit_background=True)
     print(f"Saved {output}")

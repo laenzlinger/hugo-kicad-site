@@ -57,7 +57,18 @@ jobs:
     container:
       image: ${{ inputs.container_image }}
       options: --user root
+    env:
+      # Shared paths
+      GEN_DIR: ${{ inputs.kicad_dir }}/generated
+      SITE_DIR: ${{ inputs.site_dir }}
+      # KiBot 3D model cache
+      KIBOT_3D_MODELS: /github/home/cache_3d
+      KICAD9_3DMODEL_DIR: /usr/share/kicad/3dmodels
+      KICAD10_3DMODEL_DIR: /usr/share/kicad/3dmodels
     steps:
+
+      # ── Setup ──────────────────────────────────────────────
+
       - uses: actions/checkout@v5
         with:
           fetch-depth: "0"
@@ -78,22 +89,6 @@ jobs:
           path: ~/cache_3d
           key: cache_3d
 
-      - name: Run KiBot
-        working-directory: ${{ inputs.kicad_dir }}
-        env:
-          KIBOT_3D_MODELS: /github/home/cache_3d
-          KICAD9_3DMODEL_DIR: /usr/share/kicad/3dmodels
-          KICAD10_3DMODEL_DIR: /usr/share/kicad/3dmodels
-        run: |
-          ARGS="-e ${{ inputs.schematic }} -d generated"
-          [ -n "${{ inputs.pcb }}" ] && ARGS="-b ${{ inputs.pcb }} $ARGS"
-          [ -n "${{ inputs.kibot_config }}" ] && ARGS="-c ${{ inputs.kibot_config }} $ARGS"
-          kibot $ARGS
-
-      - name: Remove STEP file
-        if: inputs.remove_step_file
-        run: rm -f "${{ inputs.kicad_dir }}/generated/3D/${{ inputs.project_name }}-3D.step"
-
       - name: Determine version
         id: ver
         run: |
@@ -102,57 +97,76 @@ jobs:
             *) echo "tag=latest" >> "$GITHUB_OUTPUT" ;;
           esac
 
-      - name: KiBot diffs
+      - name: Build KiBot args
+        id: kibot
+        run: |
+          ARGS="-e ${{ inputs.schematic }} -d generated"
+          [ -n "${{ inputs.pcb }}" ] && ARGS="-b ${{ inputs.pcb }} $ARGS"
+          [ -n "${{ inputs.kibot_config }}" ] && ARGS="-c ${{ inputs.kibot_config }} $ARGS"
+          echo "args=$ARGS" >> "$GITHUB_OUTPUT"
+
+      # ── KiBot ──────────────────────────────────────────────
+
+      - name: Run KiBot
+        working-directory: ${{ inputs.kicad_dir }}
+        run: kibot ${{ steps.kibot.outputs.args }}
+
+      - name: Remove STEP file
+        if: inputs.remove_step_file
+        run: rm -f "${{ env.GEN_DIR }}/3D/${{ inputs.project_name }}-3D.step"
+
+      - name: Run KiBot diffs
         working-directory: ${{ inputs.kicad_dir }}
         continue-on-error: true
-        env:
-          KIBOT_3D_MODELS: /github/home/cache_3d
-          KICAD9_3DMODEL_DIR: /usr/share/kicad/3dmodels
-          KICAD10_3DMODEL_DIR: /usr/share/kicad/3dmodels
         run: |
-          BASE="-e ${{ inputs.schematic }} -d generated"
-          [ -n "${{ inputs.pcb }}" ] && BASE="-b ${{ inputs.pcb }} $BASE"
-          [ -n "${{ inputs.kibot_config }}" ] && BASE="-c ${{ inputs.kibot_config }} $BASE"
           for target in diff_sch diff_pcb basic_diff_sch basic_diff_pcb; do
-            kibot $BASE -s run_erc,run_drc "$target" || true
+            kibot ${{ steps.kibot.outputs.args }} -s run_erc,run_drc "$target" || true
           done
 
-      - name: Install Hugo and Go
-        uses: jdx/mise-action@v4
-        with:
-          working_directory: ${{ inputs.site_dir }}
+      # ── Assembly models ────────────────────────────────────
 
-      - name: Prepare assembly models
+      - name: Copy assembly models
         if: inputs.assembly_dir != ''
         run: |
-          SITE="${{ inputs.site_dir }}"
-          ASSEMBLY_DIR="${{ inputs.assembly_dir }}"
-          [ -d "$ASSEMBLY_DIR" ] || exit 0
-          mkdir -p "${SITE}/static/assembly"
-          find "$ASSEMBLY_DIR" -maxdepth 1 \( -name 'assembly-*.step' -o -name 'assembly-*.glb' -o -name 'assembly-*.3mf' -o -name 'assembly-*.png' \) -exec cp {} "${SITE}/static/assembly/" \;
-          wget -q -O /tmp/screenshot.py https://raw.githubusercontent.com/laenzlinger/hugo-kicad-site/main/scripts/assembly-screenshot.py
+          [ -d "${{ inputs.assembly_dir }}" ] || exit 0
+          mkdir -p "${{ env.SITE_DIR }}/static/assembly"
+          find "${{ inputs.assembly_dir }}" -maxdepth 1 \
+            \( -name 'assembly-*.step' -o -name 'assembly-*.glb' -o -name 'assembly-*.3mf' -o -name 'assembly-*.png' \) \
+            -exec cp {} "${{ env.SITE_DIR }}/static/assembly/" \;
+
+      - name: Generate assembly thumbnails
+        if: inputs.assembly_dir != ''
+        run: |
+          ASSEMBLY="${{ env.SITE_DIR }}/static/assembly"
+          [ -d "$ASSEMBLY" ] || exit 0
+
+          # Check if any model is missing a thumbnail
           NEED_SCREENSHOT=false
-          for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
+          for model in "$ASSEMBLY"/assembly-*.step "$ASSEMBLY"/assembly-*.glb; do
             [ -f "$model" ] || continue
-            if [ ! -f "${model%.*}.png" ]; then NEED_SCREENSHOT=true; break; fi
+            [ -f "${model%.*}.png" ] || { NEED_SCREENSHOT=true; break; }
           done
-          if [ "$NEED_SCREENSHOT" = true ]; then
-            pip install -q --break-system-packages playwright > /dev/null 2>&1 || true
-            if [ -d /github/home/cache_playwright ]; then
-              cp -r /github/home/cache_playwright/* /root/.cache/ms-playwright/ 2>/dev/null || true
-            fi
-            playwright install --with-deps chromium > /dev/null 2>&1 || true
-            mkdir -p /github/home/cache_playwright
-            cp -r /root/.cache/ms-playwright/* /github/home/cache_playwright/ 2>/dev/null || true
-            for model in "${SITE}"/static/assembly/assembly-*.step "${SITE}"/static/assembly/assembly-*.glb; do
-              [ -f "$model" ] || continue
-              thumb="${model%.*}.png"
-              if [ ! -f "$thumb" ]; then
-                echo "Rendering thumbnail for $(basename $model)..."
-                python3 /tmp/screenshot.py "$model" "$thumb" || true
-              fi
-            done
+          [ "$NEED_SCREENSHOT" = true ] || exit 0
+
+          # Install Playwright with cached browsers
+          pip install -q --break-system-packages playwright > /dev/null 2>&1 || true
+          if [ -d /github/home/cache_playwright ]; then
+            cp -r /github/home/cache_playwright/* /root/.cache/ms-playwright/ 2>/dev/null || true
           fi
+          playwright install --with-deps chromium > /dev/null 2>&1 || true
+          mkdir -p /github/home/cache_playwright
+          cp -r /root/.cache/ms-playwright/* /github/home/cache_playwright/ 2>/dev/null || true
+
+          # Render missing thumbnails
+          wget -q -O /tmp/screenshot.py https://raw.githubusercontent.com/laenzlinger/hugo-kicad-site/main/scripts/assembly-screenshot.py
+          for model in "$ASSEMBLY"/assembly-*.step "$ASSEMBLY"/assembly-*.glb; do
+            [ -f "$model" ] || continue
+            thumb="${model%.*}.png"
+            if [ ! -f "$thumb" ]; then
+              echo "Rendering thumbnail for $(basename "$model")..."
+              python3 /tmp/screenshot.py "$model" "$thumb" || true
+            fi
+          done
 
       - name: Cache Playwright browsers
         if: inputs.assembly_dir != ''
@@ -161,24 +175,26 @@ jobs:
           path: /github/home/cache_playwright
           key: cache_playwright
 
-      - name: Discover assets
-        id: assets
-        run: |
-          GEN="${{ inputs.kicad_dir }}/generated"
+      # ── Discover KiBot outputs ─────────────────────────────
 
-          # Renders (prefer Blender renders if available)
+      - name: Discover renders
+        id: renders
+        run: |
           RENDERS="[]"
-          if [ -d "$GEN/3D" ]; then
-            BLENDER=$(find "$GEN/3D" -maxdepth 1 -name '*blender*.png' -printf '%f\n' | sort)
+          if [ -d "${{ env.GEN_DIR }}/3D" ]; then
+            BLENDER=$(find "${{ env.GEN_DIR }}/3D" -maxdepth 1 -name '*blender*.png' -printf '%f\n' | sort)
             if [ -n "$BLENDER" ]; then
               RENDERS=$(echo "$BLENDER" | jq -R . | jq -s .)
             else
-              RENDERS=$(find "$GEN/3D" -maxdepth 1 -name '*.png' -printf '%f\n' | sort | jq -R . | jq -s .)
+              RENDERS=$(find "${{ env.GEN_DIR }}/3D" -maxdepth 1 -name '*.png' -printf '%f\n' | sort | jq -R . | jq -s .)
             fi
           fi
-          echo "renders=$(echo $RENDERS | jq -c .)" >> "$GITHUB_OUTPUT"
+          echo "json=$(echo "$RENDERS" | jq -c .)" >> "$GITHUB_OUTPUT"
 
-          # Downloads — search by name pattern to support any KiBot directory layout
+      - name: Discover downloads
+        id: downloads
+        run: |
+          GEN="${{ env.GEN_DIR }}"
           DL="[]"
           add() {
             local m=$(find "$GEN" -name "$2" -type f $3 2>/dev/null | head -1)
@@ -190,80 +206,88 @@ jobs:
           add "Interactive BOM" "*ibom*.html"
           add "JLCPCB" "*JLCPCB*.zip"
           add "PCBWay" "*PCBWay*.zip"
-          echo "downloads=$(echo $DL | jq -c .)" >> "$GITHUB_OUTPUT"
+          echo "json=$(echo "$DL" | jq -c .)" >> "$GITHUB_OUTPUT"
 
-          # Diffs
+      - name: Discover diffs
+        id: diffs
+        run: |
+          GEN="${{ env.GEN_DIR }}"
           DIFFS="[]"
           for f in $(find "$GEN/Diff" "$GEN/diff" \( -name '*.html' -o -name '*.pdf' \) -type f 2>/dev/null | grep -v '(' | sort -u); do
             NAME=$(basename "$f" .html | sed 's/-/ /g; s/\b\(.\)/\u\1/g')
             DIFFS=$(echo "$DIFFS" | jq --arg n "$NAME" --arg p "${f#$GEN/}" '. + [{"name":$n,"path":$p}]')
           done
-          echo "diffs=$(echo $DIFFS | jq -c .)" >> "$GITHUB_OUTPUT"
+          echo "json=$(echo "$DIFFS" | jq -c .)" >> "$GITHUB_OUTPUT"
 
-          # Interactive BOM
-          IBOM=$(find "$GEN" -name '*ibom*.html' -type f 2>/dev/null | head -1)
-          [ -n "$IBOM" ] && echo "ibom=${IBOM#$GEN/}" >> "$GITHUB_OUTPUT" || echo "ibom=" >> "$GITHUB_OUTPUT"
+      - name: Discover interactive BOM
+        id: ibom
+        run: |
+          IBOM=$(find "${{ env.GEN_DIR }}" -name '*ibom*.html' -type f 2>/dev/null | head -1)
+          echo "path=${IBOM:+${IBOM#${{ env.GEN_DIR }}/}}" >> "$GITHUB_OUTPUT"
 
-      - name: Build Hugo site
-        env:
-          RENDERS_JSON: ${{ steps.assets.outputs.renders }}
-          DOWNLOADS_JSON: ${{ steps.assets.outputs.downloads }}
-          DIFFS_JSON: ${{ steps.assets.outputs.diffs }}
-          IBOM_PATH: ${{ steps.assets.outputs.ibom }}
+      # ── Hugo site build ────────────────────────────────────
+
+      - name: Install Hugo and Go
+        uses: jdx/mise-action@v4
+        with:
+          working_directory: ${{ inputs.site_dir }}
+
+      - name: Copy assets to Hugo static dir
+        run: |
+          rsync -a "${{ env.GEN_DIR }}/" "${{ env.SITE_DIR }}/static/"
+          rm -f "${{ env.SITE_DIR }}/static/index.html"
+
+          # Copy KiCad source files for KiCanvas viewer
+          mkdir -p "${{ env.SITE_DIR }}/static/kicad"
+          cp ${{ inputs.kicad_dir }}/*.kicad_sch ${{ inputs.kicad_dir }}/*.kicad_pcb "${{ env.SITE_DIR }}/static/kicad/" 2>/dev/null || true
+
+      - name: Build Hugo config override
         run: |
           TAG="${{ steps.ver.outputs.tag }}"
           VERSION="$TAG"
           [ "$TAG" = "latest" ] && VERSION="main"
-          SITE="${{ inputs.site_dir }}"
-          BASE="${{ inputs.site_base_url }}/${TAG}/"
 
-          # Copy KiBot outputs into Hugo static dir
-          rsync -a "${{ inputs.kicad_dir }}/generated/" "${SITE}/static/"
-          rm -f "${SITE}/static/index.html"
-
-          # Copy KiCad files for KiCanvas
-          mkdir -p "${SITE}/static/kicad"
-          cp ${{ inputs.kicad_dir }}/*.kicad_sch ${{ inputs.kicad_dir }}/*.kicad_pcb "${SITE}/static/kicad/" 2>/dev/null || true
-          # Order: root schematic first, then remaining schematics, then PCB
-          KICAD_FILES=$(cd "${SITE}/static/kicad" && {
+          # Order KiCad files: root schematic first, then others, then PCB
+          KICAD_FILES=$(cd "${{ env.SITE_DIR }}/static/kicad" && {
             [ -f "${{ inputs.schematic }}" ] && echo "${{ inputs.schematic }}"
             ls *.kicad_sch 2>/dev/null | grep -v "^${{ inputs.schematic }}$" || true
             ls *.kicad_pcb 2>/dev/null || true
           } | jq -R . | jq -s -c .)
 
-          # Discover assembly models (files already copied by Prepare step)
+          # Auto-discover assembly models unless manually configured
           ASSEMBLY_MODELS="[]"
-          if [ -d "${SITE}/static/assembly" ]; then
-            if ! grep -q 'assemblyModels:' "${SITE}/hugo.yaml" 2>/dev/null; then
-              ASSEMBLY_MODELS=$(cd "${SITE}/static/assembly" && ls *.step *.glb *.3mf 2>/dev/null | jq -R '{name: (. | sub("assembly-";"") | sub("\\.(step|glb|3mf)$";"") | gsub("[-_]";" ")), file: .}' | jq -s -c .)
+          if [ -d "${{ env.SITE_DIR }}/static/assembly" ]; then
+            if ! grep -q 'assemblyModels:' "${{ env.SITE_DIR }}/hugo.yaml" 2>/dev/null; then
+              ASSEMBLY_MODELS=$(cd "${{ env.SITE_DIR }}/static/assembly" && \
+                ls *.step *.glb *.3mf 2>/dev/null | \
+                jq -R '{name: (. | sub("assembly-";"") | sub("\\.(step|glb|3mf)$";"") | gsub("[-_]";" ")), file: .}' | \
+                jq -s -c .)
             fi
           fi
 
-          # Clear downloads/diffs for latest (non-release) builds
-          if [ "$TAG" = "latest" ]; then
-            DOWNLOADS='[]'
-          else
-            DOWNLOADS="$DOWNLOADS_JSON"
-          fi
+          # Clear downloads for non-release builds
+          DOWNLOADS='${{ steps.downloads.outputs.json }}'
+          [ "$TAG" = "latest" ] && DOWNLOADS='[]'
 
-          # Build config override with dynamic params
+          # Write config override
           {
-            echo "baseURL: ${BASE}"
+            echo "baseURL: \"${{ inputs.site_base_url }}/${TAG}/\""
             echo "params:"
             echo "  version: \"${VERSION}\""
             echo "  kicadFiles: ${KICAD_FILES}"
-            echo "  renders: ${RENDERS_JSON}"
+            echo "  renders: ${{ steps.renders.outputs.json }}"
             echo "  downloads: ${DOWNLOADS}"
-            echo "  diffs: ${DIFFS_JSON}"
-          } > "${SITE}/config_override.yaml"
-          if [ -n "$IBOM_PATH" ]; then
-            echo "  ibom: \"${IBOM_PATH}\"" >> "${SITE}/config_override.yaml"
-          fi
-          if [ "$ASSEMBLY_MODELS" != "[]" ]; then
-            echo "  assemblyModels: ${ASSEMBLY_MODELS}" >> "${SITE}/config_override.yaml"
-          fi
+            echo "  diffs: ${{ steps.diffs.outputs.json }}"
+          } > "${{ env.SITE_DIR }}/config_override.yaml"
 
-          cd "$SITE"
+          # Append optional params
+          IBOM="${{ steps.ibom.outputs.path }}"
+          [ -n "$IBOM" ] && echo "  ibom: \"${IBOM}\"" >> "${{ env.SITE_DIR }}/config_override.yaml"
+          [ "$ASSEMBLY_MODELS" != "[]" ] && echo "  assemblyModels: ${ASSEMBLY_MODELS}" >> "${{ env.SITE_DIR }}/config_override.yaml"
+
+      - name: Build Hugo site
+        working-directory: ${{ inputs.site_dir }}
+        run: |
           hugo mod get
           hugo --minify --config hugo.yaml,config_override.yaml
 
@@ -273,7 +297,7 @@ jobs:
           name: site-${{ steps.ver.outputs.tag }}
           path: ${{ inputs.site_dir }}/public
 
-      # --- Deploy ---
+      # ── Deploy to GitHub Pages ─────────────────────────────
 
       - name: Update versions.json
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
@@ -282,21 +306,17 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git fetch origin gh-pages:gh-pages 2>/dev/null || true
 
-          # Get existing versions.json from gh-pages
+          # Get existing versions.json, remove current tag if present
           EXISTING="[]"
           git show gh-pages:versions.json > /tmp/old-versions.json 2>/dev/null && \
             EXISTING=$(jq 'map(select(.tag != "'"$TAG"'"))' /tmp/old-versions.json)
 
-          # Build new entry
-          NEW=$(jq -n --arg tag "$TAG" '{tag:$tag}')
-
-          # Prepend, mark first as latest
-          echo "$EXISTING" | jq --argjson new "$NEW" \
-            '[$new] + [.[] | del(.latest)] | .[0].latest = true' > /tmp/versions.json
+          # Prepend new entry, mark first as latest
+          echo "$EXISTING" | jq --arg tag "$TAG" \
+            '[{tag:$tag}] + [.[] | del(.latest)] | .[0].latest = true' > /tmp/versions.json
 
           mkdir -p deploy-root
           cp /tmp/versions.json deploy-root/versions.json
-          # Root redirect to latest
           echo '<meta http-equiv="refresh" content="0;url=latest/">' > deploy-root/index.html
           touch deploy-root/.nojekyll
 
