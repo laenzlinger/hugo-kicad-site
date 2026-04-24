@@ -282,8 +282,8 @@ jobs:
 
           # Append optional params
           IBOM="${{ steps.ibom.outputs.path }}"
-          [ -n "$IBOM" ] && echo "  ibom: \"${IBOM}\"" >> "${{ env.SITE_DIR }}/config_override.yaml"
-          [ "$ASSEMBLY_MODELS" != "[]" ] && echo "  assemblyModels: ${ASSEMBLY_MODELS}" >> "${{ env.SITE_DIR }}/config_override.yaml"
+          [ -n "$IBOM" ] && echo "  ibom: \"${IBOM}\"" >> "${{ env.SITE_DIR }}/config_override.yaml" || true
+          [ "$ASSEMBLY_MODELS" != "[]" ] && echo "  assemblyModels: ${ASSEMBLY_MODELS}" >> "${{ env.SITE_DIR }}/config_override.yaml" || true
 
       - name: Build Hugo site
         working-directory: ${{ inputs.site_dir }}
