@@ -1,6 +1,7 @@
 # hugo-kicad-site
 
 A reusable Hugo theme for KiCad hardware project documentation.
+Works best with [KiBot](https://github.com/INTI-CMNB/KiBot) for automated asset generation (Gerbers, BOM, 3D renders, diffs, and more). The included CI workflow uses KiBot to produce all the artifacts the site displays.
 
 **[Live demo →](https://laenzlinger.github.io/hugo-kicad-site/)** | **[Granit →](https://laenzlinger.github.io/granit/latest/)** (a real-world project using this theme)
 
