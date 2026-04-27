@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       project_name:
-        description: "Project name (e.g. pedalboard-hw)"
+        description: "Project name (e.g. my-project)"
         required: true
         type: string
       schematic:
@@ -36,7 +36,7 @@ on:
         type: string
         default: "site"
       site_base_url:
-        description: "Base URL of the GitHub Pages site (e.g. https://pedalboard.github.io/pedalboard-hw)"
+        description: "Base URL of the GitHub Pages site (e.g. https://my-org.github.io/my-project)"
         required: true
         type: string
       remove_step_file:

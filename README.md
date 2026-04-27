@@ -44,10 +44,10 @@ gh-pages/
 Create a `site/` directory in your hardware repo:
 
 ```
-pedalboard-hw/
-├── pedalboard-hw.kicad_sch
-├── pedalboard-hw.kicad_pcb
-├── pedalboard-hw.kibot.yaml
+my-project/
+├── my-project.kicad_sch
+├── my-project.kicad_pcb
+├── my-project.kibot.yaml
 └── site/
     ├── .mise.toml
     ├── hugo.yaml

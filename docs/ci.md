@@ -26,10 +26,12 @@ jobs:
   site:
     uses: laenzlinger/hugo-kicad-site/.github/workflows/kicad-site.yml@main
     with:
-      project_name: "pedalboard-hw"
-      schematic: "pedalboard-hw.kicad_sch"
-      site_base_url: "https://pedalboard.github.io/pedalboard-hw"
+      project_name: "my-project"
+      schematic: "my-project.kicad_sch"
+      site_base_url: "https://my-org.github.io/my-project"
 ```
+
+See the [example site workflow](../.github/workflows/example-site.yml) for a working configuration.
 
 ## Inputs
 
