@@ -33,6 +33,10 @@ jobs:
 
 See the [example site workflow](../.github/workflows/example-site.yml) for a working configuration.
 
+## GitHub Pages setup
+
+In your repo settings, go to **Pages** and set the source to **Deploy from a branch** → `gh-pages` / `/ (root)`.
+
 ## Inputs
 
 | Input | Default | Description |
