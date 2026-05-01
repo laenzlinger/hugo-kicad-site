@@ -260,6 +260,7 @@ jobs:
             if ! grep -q 'assemblyModels:' "${{ env.SITE_DIR }}/hugo.yaml" 2>/dev/null; then
               ASSEMBLY_MODELS=$(cd "${{ env.SITE_DIR }}/static/assembly" && \
                 ls *.step *.glb *.3mf 2>/dev/null | \
+                awk -F. '{base=$0; sub(/\.[^.]+$/,"",base); ext=$NF; if(ext=="glb") seen[base]=ext" "$0; else if(!(base in seen)) seen[base]=ext" "$0} END{for(b in seen){split(seen[b],a," "); print a[2]}}' | \
                 jq -R '{name: (. | sub("assembly-";"") | sub("\\.(step|glb|3mf)$";"") | gsub("[-_]";" ")), file: .}' | \
                 jq -s -c .)
             fi
