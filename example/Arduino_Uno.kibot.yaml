@@ -61,6 +61,13 @@ outputs:
       download: true
       output: "assembly-pcb.step"
 
+  - name: glb
+    type: export_3d
+    dir: Assembly
+    options:
+      format: glb
+      output: "assembly-pcb.glb"
+
   - name: navigate
     type: navigate_results
     dir: Browse
