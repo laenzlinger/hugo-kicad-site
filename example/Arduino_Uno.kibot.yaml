@@ -5,6 +5,30 @@ import:
   - file: PCB2Blender_2_1
 
 outputs:
+  - name: site
+    comment: Hugo KiCad Site
+    type: kicad_site
+    dir: ../exampleSite
+    options:
+      base_url: https://laenzlinger.github.io/hugo-kicad-site/
+      # NOTE: use 'renderers' until KiBot fixes the 'renders' attribute bug
+      renderers: blender_export
+      downloads:
+        - name: "Schematic (PDF)"
+          output: schematic
+        - name: "BOM (HTML)"
+          output: bom
+        - name: "Interactive BOM"
+          output: ibom
+      diffs:
+        - name: "Diff Schematic"
+          output: diff_sch
+        - name: "Diff PCB"
+          output: diff_pcb
+      assembly_models:
+        - name: "PCB Assembly"
+          output: step
+
   - name: blender_export
     type: blender_export
     dir: 3D

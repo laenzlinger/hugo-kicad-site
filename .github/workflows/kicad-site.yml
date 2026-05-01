@@ -176,8 +176,21 @@ jobs:
           key: cache_playwright
 
       # ── Discover KiBot outputs ─────────────────────────────
+      # NOTE: These steps are replaced by KiBot's kicad_site output
+      # when the KiBot config includes a kicad_site output definition.
+      # Kept as fallback for configs without kicad_site.
+
+      - name: Check for KiBot-generated config
+        id: kibot_site
+        run: |
+          if [ -f "${{ env.SITE_DIR }}/config_override.yaml" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Discover renders
+        if: steps.kibot_site.outputs.exists == 'false'
         id: renders
         run: |
           RENDERS="[]"
@@ -192,6 +205,7 @@ jobs:
           echo "json=$(echo "$RENDERS" | jq -c .)" >> "$GITHUB_OUTPUT"
 
       - name: Discover downloads
+        if: steps.kibot_site.outputs.exists == 'false'
         id: downloads
         run: |
           GEN="${{ env.GEN_DIR }}"
@@ -209,6 +223,7 @@ jobs:
           echo "json=$(echo "$DL" | jq -c .)" >> "$GITHUB_OUTPUT"
 
       - name: Discover diffs
+        if: steps.kibot_site.outputs.exists == 'false'
         id: diffs
         run: |
           GEN="${{ env.GEN_DIR }}"
@@ -220,6 +235,7 @@ jobs:
           echo "json=$(echo "$DIFFS" | jq -c .)" >> "$GITHUB_OUTPUT"
 
       - name: Discover interactive BOM
+        if: steps.kibot_site.outputs.exists == 'false'
         id: ibom
         run: |
           IBOM=$(find "${{ env.GEN_DIR }}" -name '*ibom*.html' -type f 2>/dev/null | head -1)
@@ -233,6 +249,7 @@ jobs:
           working_directory: ${{ inputs.site_dir }}
 
       - name: Copy assets to Hugo static dir
+        if: steps.kibot_site.outputs.exists == 'false'
         run: |
           rsync -a "${{ env.GEN_DIR }}/" "${{ env.SITE_DIR }}/static/"
           rm -f "${{ env.SITE_DIR }}/static/index.html"
@@ -242,6 +259,7 @@ jobs:
           cp ${{ inputs.kicad_dir }}/*.kicad_sch ${{ inputs.kicad_dir }}/*.kicad_pcb "${{ env.SITE_DIR }}/static/kicad/" 2>/dev/null || true
 
       - name: Build Hugo config override
+        if: steps.kibot_site.outputs.exists == 'false'
         run: |
           TAG="${{ steps.ver.outputs.tag }}"
           VERSION="$TAG"
