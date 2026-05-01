@@ -2803,8 +2803,8 @@ Transform {
         Shape {
           appearance Appearance {
             material Material {
-              diffuseColor 0.0784 0.2 0.141
-              specularColor 0.355 0.44 0.399
+              diffuseColor 0.00784 0.231 0.635
+              specularColor 0.305 0.462 0.745
               emissiveColor 0 0 0
               ambientIntensity 0.8
               transparency 0.17
@@ -5591,8 +5591,8 @@ Transform {
         Shape {
           appearance Appearance {
             material Material {
-              diffuseColor 0.0784 0.2 0.141
-              specularColor 0.355 0.44 0.399
+              diffuseColor 0.00784 0.231 0.635
+              specularColor 0.305 0.462 0.745
               emissiveColor 0 0 0
               ambientIntensity 0.8
               transparency 0.17
