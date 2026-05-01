@@ -31,7 +31,22 @@
         var el = document.getElementById(ph.dataset.viewerId);
         el.style.display = 'block';
         ph.style.display = 'none';
-        OV.Init3DViewerFromUrlList(el, [ph.dataset.model]);
+
+        var isDark = document.body.classList.contains('dark');
+        var bg = isDark
+          ? new OV.RGBAColor(30, 30, 30, 255)
+          : new OV.RGBAColor(255, 255, 255, 255);
+
+        var base = '{{ $.Site.BaseURL }}assets/envmaps/';
+        var env = new OV.EnvironmentSettings(
+          [base+'posx.jpg', base+'negx.jpg', base+'posy.jpg', base+'negy.jpg', base+'posz.jpg', base+'negz.jpg'],
+          false
+        );
+
+        OV.Init3DViewerFromUrlList(el, [ph.dataset.model], {
+          backgroundColor: bg,
+          environmentSettings: env
+        });
       });
     });
   </script>
