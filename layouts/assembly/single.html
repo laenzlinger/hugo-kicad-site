@@ -45,6 +45,8 @@
 
         OV.Init3DViewerFromUrlList(el, [ph.dataset.model], {
           backgroundColor: bg,
+          defaultColor: new OV.RGBColor(210, 210, 210),
+          edgeSettings: new OV.EdgeSettings(true, new OV.RGBColor(0, 0, 0), 1),
           environmentSettings: env
         });
       });
