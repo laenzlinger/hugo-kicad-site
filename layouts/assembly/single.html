@@ -7,6 +7,7 @@
   <div class="post-content md-content">
   {{ .Content }}
   {{ $models := .Site.Params.assemblyModels }}
+  {{ $assemblyDir := default "assembly" .Site.Params.assemblyDir }}
   {{ with $models }}
   {{ range $i, $m := . }}
   {{ $thumb := $m.file | replaceRE `\.(step|glb|3mf)$` ".png" }}
@@ -15,8 +16,8 @@
     <div class="viewer-wrap">
       {{ partial "fullscreen-btn.html" $ }}
       <div class="viewer-placeholder" data-viewer-id="viewer-{{ $i }}"
-           data-model="{{ $.Site.BaseURL }}assembly/{{ $m.file }}">
-        <img src="{{ $.Site.BaseURL }}assembly/{{ $thumb }}" alt="{{ $m.name }}" onerror="this.style.display='none'">
+           data-model="{{ $.Site.BaseURL }}{{ $assemblyDir }}/{{ $m.file }}">
+        <img src="{{ $.Site.BaseURL }}{{ $assemblyDir }}/{{ $thumb }}" alt="{{ $m.name }}" onerror="this.style.display='none'">
         <button class="viewer-load-btn">▶ Load 3D Model</button>
       </div>
       <div id="viewer-{{ $i }}" class="online_3d_viewer" style="display:none;"></div>

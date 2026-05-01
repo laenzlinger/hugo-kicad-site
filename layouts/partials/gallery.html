@@ -1,8 +1,9 @@
 {{ with .Site.Params.renders }}
+{{ $renderDir := default "3D" $.Site.Params.renderDir }}
 <div class="gallery-grid">
   {{ range . }}
   <figure>
-    <img src="{{ $.Site.BaseURL }}3D/{{ . }}" alt="{{ . | replaceRE `[-_]` " " | replaceRE `\.png$` "" }}" loading="lazy">
+    <img src="{{ $.Site.BaseURL }}{{ $renderDir }}/{{ . }}" alt="{{ . | replaceRE `[-_]` " " | replaceRE `\.png$` "" }}" loading="lazy">
     <figcaption>{{ . | replaceRE `[-_]` " " | replaceRE `\.png$` "" }}</figcaption>
   </figure>
   {{ end }}

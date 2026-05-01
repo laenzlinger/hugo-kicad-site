@@ -90,6 +90,8 @@ params:
 |-------|------|-------------|
 | `baseURL` | string | Full URL including version path segment |
 | `params.version` | string | Git tag (e.g. `v1.0.0`) or `main` for latest |
+| `params.renderDir` | string | Directory name for 3D renders in `static/` (default: `3D`) |
+| `params.assemblyDir` | string | Directory name for assembly models in `static/` (default: `assembly`) |
 | `params.kicadFiles` | string[] | Filenames in `static/kicad/`, root schematic first, then sub-sheets, then PCB |
 | `params.renders` | string[] | Filenames in `static/3D/`, Blender renders preferred over plain renders |
 | `params.downloads` | object[] | `{name, path}` — display name and path relative to `static/` |
