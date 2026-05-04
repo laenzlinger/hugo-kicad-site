@@ -47,10 +47,10 @@ kicanvas-embed {
 
 /* ── Gallery ── */
 .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1rem 0; }
+.gallery-grid figure { border-radius: 6px; overflow: hidden; border: 1px solid var(--kicad-border); margin: 0; width: 100%; }
+.gallery-grid img { width: 100%; max-width: 100%; height: auto; display: block; }
 @media (min-width: 1280px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 640px) { .gallery-grid { grid-template-columns: 1fr; } }
-.gallery-grid figure { border-radius: 6px; overflow: hidden; border: 1px solid var(--kicad-border); margin: 0; }
-.gallery-grid img { width: 100%; height: auto; display: block; }
 .gallery-grid figcaption { padding: 0.4rem 0.6rem; font-size: 0.85rem; color: var(--kicad-text-secondary); }
 
 /* ── Downloads ── */
@@ -152,7 +152,6 @@ kicanvas-embed {
 
 /* ── Tables ── */
 .content table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-.content > p > img { max-width: 600px; width: 100%; height: auto; display: block; margin: 1rem auto; }
 .content th, .content td { padding: 0.5rem 0.75rem; border: 1px solid var(--kicad-border); text-align: left; }
 .content th { background: var(--kicad-bg); font-weight: 600; }
 .content tr:nth-child(even) td { background: var(--kicad-bg-alt); }
