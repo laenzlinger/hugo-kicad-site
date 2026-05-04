@@ -48,7 +48,3 @@ menu:
       params:
         icon: github
       weight: 100
-    - name: Theme Toggle
-      weight: 110
-      params:
-        type: theme-toggle
