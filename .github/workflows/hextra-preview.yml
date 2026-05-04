@@ -1,0 +1,36 @@
+name: Hextra Preview
+
+on:
+  push:
+    branches: [feature/hextra-theme]
+
+permissions:
+  contents: write
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.160.1'
+          extended: true
+
+      - name: Build
+        run: hugo --source exampleSite -b "https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/"
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: exampleSite/public
+          target-folder: hextra-preview
+          clean: false

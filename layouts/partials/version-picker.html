@@ -24,7 +24,7 @@
           var url = opt.dataset.url;
           window.location.href = url ? url : root + '/' + sel.value + '/' + path;
         });
-        var target = document.querySelector('.logo-switches');
+        var target = document.querySelector('.hextra-nav-container nav');
         if (target) target.appendChild(sel);
       })
       .catch(function() {});
