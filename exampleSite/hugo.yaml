@@ -24,7 +24,7 @@ params:
     width: wide
   theme:
     default: system
-    displayToggle: true
+    displayToggle: false
   footer:
     displayCopyright: false
     displayPoweredBy: false
@@ -48,3 +48,7 @@ menu:
       params:
         icon: github
       weight: 100
+    - name: Theme Toggle
+      weight: 110
+      params:
+        type: theme-toggle
