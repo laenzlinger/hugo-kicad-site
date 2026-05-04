@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/</loc>
+  </url><url>
+    <loc>https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/release/</loc>
+  </url><url>
+    <loc>https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/board/</loc>
+  </url><url>
+    <loc>https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/design-notes/</loc>
+  </url><url>
+    <loc>https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/assembly/</loc>
+  </url><url>
+    <loc>https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/categories/</loc>
+  </url><url>
+    <loc>https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/tags/</loc>
+  </url>
+</urlset>
