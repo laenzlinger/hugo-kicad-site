@@ -1,17 +1,1 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Hugo KiCad Site — Demo – Overview</title>
-    <link>https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/</link>
-    <description>Recent content in Overview on Hugo KiCad Site — Demo</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	  <atom:link href="https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-      
-      
-    
-    
-  </channel>
-</rss>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hugo KiCad Site — Demo – Overview</title><link>https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/latest/</link><description>Recent content in Overview on Hugo KiCad Site — Demo</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/latest/index.xml" rel="self" type="application/rss+xml"/></channel></rss>
