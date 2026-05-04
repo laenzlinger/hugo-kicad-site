@@ -33,6 +33,19 @@ jobs:
           name: site-latest
           path: site
 
+      - name: Create versions.json for preview
+        run: |
+          mkdir -p preview-root
+          echo '[{"tag":"latest","latest":true}]' > preview-root/versions.json
+
+      - name: Deploy versions.json
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: preview-root
+          target-folder: hextra-preview
+          clean: false
+
       - name: Deploy to hextra-preview
         uses: JamesIves/github-pages-deploy-action@v4
         with:
