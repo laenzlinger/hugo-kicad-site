@@ -6,31 +6,36 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  preview:
+  build:
+    uses: ./.github/workflows/kicad-site.yml
+    with:
+      project_name: "Arduino_Uno"
+      schematic: "Arduino_Uno.kicad_sch"
+      pcb: "Arduino_Uno.kicad_pcb"
+      kicad_dir: "example"
+      kibot_config: "Arduino_Uno.kibot.yaml"
+      site_dir: "exampleSite"
+      site_base_url: "https://laenzlinger.github.io/hugo-kicad-site/hextra-preview"
+      assembly_dir: "example"
+      remove_step_file: false
+
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - uses: actions/download-artifact@v5
         with:
-          go-version: '1.24'
+          name: site-latest
+          path: site
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: '0.160.1'
-          extended: true
-
-      - name: Build
-        run: hugo --source exampleSite -b "https://laenzlinger.github.io/hugo-kicad-site/hextra-preview/"
-
-      - name: Deploy
+      - name: Deploy to hextra-preview
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: exampleSite/public
+          folder: site
           target-folder: hextra-preview
           clean: false
