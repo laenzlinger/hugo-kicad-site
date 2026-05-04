@@ -3,6 +3,7 @@
 /* ── CSS variable bridge ── */
 /* Map semantic names to Hextra/Tailwind values for light/dark mode */
 :root {
+  --hextra-max-content-width: 100%;
   --kicad-bg: #f6f6f6;
   --kicad-bg-alt: #eee;
   --kicad-text: #1d1d1d;
