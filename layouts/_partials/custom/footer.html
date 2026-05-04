@@ -1,6 +1,7 @@
 {{/* Custom footer partial for hugo-kicad-site */}}
+{{ $ctx := .context }}
 <div class="footer-badges">
-{{ with .Site.Params.oshwaID }}<a href="https://certification.oshwa.org/{{ . | lower }}.html"><img src="https://img.shields.io/badge/OSHWA-{{ . }}-blue" alt="OSHWA {{ . }}"></a>{{ end }}
-{{ with .Site.Params.license }}<img src="https://img.shields.io/badge/License-{{ . | replaceRE `[-.]` "--" }}-green" alt="License: {{ . }}">{{ end }}
+{{ with $ctx.Site.Params.oshwaID }}<a href="https://certification.oshwa.org/{{ . | lower }}.html"><img src="https://img.shields.io/badge/OSHWA-{{ . }}-blue" alt="OSHWA {{ . }}"></a>{{ end }}
+{{ with $ctx.Site.Params.license }}<img src="https://img.shields.io/badge/License-{{ . | replaceRE `[-.]` "--" }}-green" alt="License: {{ . }}">{{ end }}
 </div>
-{{ partial "version-picker.html" . }}
+{{ partial "version-picker.html" $ctx }}
