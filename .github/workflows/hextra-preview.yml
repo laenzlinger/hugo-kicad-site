@@ -38,5 +38,5 @@ jobs:
         with:
           branch: gh-pages
           folder: site
-          target-folder: hextra-preview
+          target-folder: hextra-preview/latest
           clean: false
