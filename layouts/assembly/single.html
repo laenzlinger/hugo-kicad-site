@@ -32,7 +32,8 @@
         el.style.display = 'block';
         ph.style.display = 'none';
 
-        var isDark = document.body.classList.contains('dark');
+        var isDark = document.documentElement.dataset.theme === 'dark' ||
+          document.documentElement.classList.contains('dark');
         var bg = isDark
           ? new OV.RGBAColor(30, 30, 30, 255)
           : new OV.RGBAColor(255, 255, 255, 255);
