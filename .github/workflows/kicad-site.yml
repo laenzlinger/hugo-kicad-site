@@ -142,7 +142,7 @@ jobs:
 
           # Check if any model is missing a thumbnail
           NEED_SCREENSHOT=false
-          for model in "$ASSEMBLY"/assembly-*.step "$ASSEMBLY"/assembly-*.glb; do
+          for model in "$ASSEMBLY"/assembly-*.glb "$ASSEMBLY"/assembly-*.step "$ASSEMBLY"/assembly-*.3mf; do
             [ -f "$model" ] || continue
             [ -f "${model%.*}.png" ] || { NEED_SCREENSHOT=true; break; }
           done
@@ -157,9 +157,9 @@ jobs:
           mkdir -p /github/home/cache_playwright
           cp -r /root/.cache/ms-playwright/* /github/home/cache_playwright/ 2>/dev/null || true
 
-          # Render missing thumbnails
+          # Render missing thumbnails (prefer GLB for colored previews)
           wget -q -O /tmp/screenshot.py https://raw.githubusercontent.com/laenzlinger/hugo-kicad-site/main/scripts/assembly-screenshot.py
-          for model in "$ASSEMBLY"/assembly-*.step "$ASSEMBLY"/assembly-*.glb; do
+          for model in "$ASSEMBLY"/assembly-*.glb "$ASSEMBLY"/assembly-*.step "$ASSEMBLY"/assembly-*.3mf; do
             [ -f "$model" ] || continue
             thumb="${model%.*}.png"
             if [ ! -f "$thumb" ]; then
