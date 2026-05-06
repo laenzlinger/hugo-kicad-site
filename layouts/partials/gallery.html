@@ -2,10 +2,8 @@
 {{ $renderDir := default "3D" $.Site.Params.renderDir }}
 <div class="gallery-grid">
   {{ range . }}
-  {{ $caption := . | replaceRE `\.png$` "" | replaceRE `^[^-]*-` "" | replaceRE `3D[-_]` "" | replaceRE `blender[-_]` "" | replaceRE `[-_]` " " | strings.TrimLeft " " }}
-  {{ $caption = $caption | replaceRE `^\d+\s*` "" }}
+  {{ $caption := . | replaceRE `\.png$` "" | replaceRE `^.*_(\d+)_` "" | replaceRE `[-_]` " " | title }}
   {{ if not $caption }}{{ $caption = . | replaceRE `\.png$` "" | replaceRE `[-_]` " " }}{{ end }}
-  {{ $caption = $caption | title }}
   <figure>
     <img src="{{ $.Site.BaseURL }}{{ $renderDir }}/{{ . }}" alt="{{ $caption }}" loading="lazy">
     <figcaption>{{ $caption }}</figcaption>
