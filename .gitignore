@@ -5,3 +5,4 @@ example/.history/
 example/*-backups/
 example/*.kicad_prl
 node_modules/
+_vendor/
