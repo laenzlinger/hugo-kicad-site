@@ -16,6 +16,9 @@ Works best with [KiBot](https://github.com/INTI-CMNB/KiBot) for automated asset 
 - Fullscreen toggle on all viewers
 - Downloads section (Gerbers, BOM, iBOM, schematics)
 - Links to GitHub repo, OSHWA certification, fabrication, BOM suppliers
+- Built-in full-text search
+- Dark/light mode with automatic system detection
+- Table of contents on every page
 - Extensible with custom markdown pages (assembly guides, design notes, etc.)
 - Fully configurable via `hugo.yaml` params
 - Reusable GitHub Actions workflow for CI/CD
@@ -110,4 +113,4 @@ GPL-3.0-or-later
 
 ## Credits
 
-Built on top of [PaperMod](https://github.com/adityatelange/hugo-PaperMod). All custom layouts use PaperMod's `baseof.html` and styling.
+Built on top of [Hextra](https://github.com/imfing/hextra), a modern Hugo documentation theme.
