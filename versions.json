@@ -1,13 +1,13 @@
 [
   {
-    "tag": "v1.1.0",
+    "tag": "latest",
     "latest": true
   },
   {
-    "tag": "v2.0.0"
+    "tag": "v1.1.0"
   },
   {
-    "tag": "latest"
+    "tag": "v2.0.0"
   },
   {
     "tag": "v1.0.3"
