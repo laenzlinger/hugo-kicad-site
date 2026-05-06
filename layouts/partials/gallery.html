@@ -10,4 +10,26 @@
   </figure>
   {{ end }}
 </div>
+<div class="lightbox" aria-hidden="true"><img src="" alt=""></div>
+<script>
+(function() {
+  var lb = document.querySelector('.lightbox');
+  var lbImg = lb.querySelector('img');
+  document.querySelector('.gallery-grid').addEventListener('click', function(e) {
+    var img = e.target.closest('img');
+    if (!img) return;
+    lbImg.src = img.src;
+    lbImg.alt = img.alt;
+    lb.classList.add('active');
+    lb.setAttribute('aria-hidden', 'false');
+  });
+  lb.addEventListener('click', function() {
+    lb.classList.remove('active');
+    lb.setAttribute('aria-hidden', 'true');
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && lb.classList.contains('active')) lb.click();
+  });
+})();
+</script>
 {{ end }}

@@ -87,12 +87,44 @@ describe('Layout structure (all pages)', () => {
 });
 
 describe('CSS output', () => {
-  it('compiled CSS contains custom styles', () => {
+  let css;
+  beforeAll(() => {
     const cssFiles = execSync(`find ${publicDir}/css -name "*.css"`, { encoding: 'utf-8' }).trim().split('\n');
-    const css = cssFiles.map(f => readFileSync(f, 'utf-8')).join('');
+    css = cssFiles.map(f => readFileSync(f, 'utf-8')).join('');
+  });
+
+  it('compiled CSS contains custom styles', () => {
     expect(css).toContain('gallery-grid');
     expect(css).toContain('viewer-fullscreen-btn');
     expect(css).toContain('release-card');
     expect(css).toContain('kicad-bg');
+  });
+
+  it('version picker uses Hextra-matching colors', () => {
+    expect(css).toContain('.version-select');
+    expect(css).toContain('.dark .version-select');
+  });
+
+  it('gallery images override prose margin inside .content', () => {
+    expect(css).toContain('.content .gallery-grid img');
+    expect(css).toMatch(/\.content .gallery-grid img[^}]*margin:\s*0/);
+  });
+
+  it('lightbox styles are present', () => {
+    expect(css).toContain('.lightbox');
+    expect(css).toContain('.lightbox.active');
+  });
+});
+
+describe('Gallery lightbox', () => {
+  it('gallery partial includes lightbox markup', () => {
+    const partial = readFileSync(join(__dirname, '../../layouts/partials/gallery.html'), 'utf-8');
+    expect(partial).toContain('class="lightbox"');
+    expect(partial).toContain('aria-hidden="true"');
+  });
+
+  it('gallery partial includes Escape key handler', () => {
+    const partial = readFileSync(join(__dirname, '../../layouts/partials/gallery.html'), 'utf-8');
+    expect(partial).toContain("'Escape'");
   });
 });
