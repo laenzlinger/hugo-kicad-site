@@ -8,15 +8,15 @@
       <div class="content">
 
       {{ with .Site.Params.renders }}
-      <h2>3D Renders</h2>
+      <h2>3D Renders<span class="hx:absolute hx:-mt-20" id="3d-renders"></span><a href="#3d-renders" class="subheading-anchor" aria-label="Permalink for this section"></a></h2>
       {{ end }}
       {{ partial "gallery.html" $ }}
 
-      <h2>Schematic &amp; PCB</h2>
+      <h2>Schematic &amp; PCB<span class="hx:absolute hx:-mt-20" id="schematic--pcb"></span><a href="#schematic--pcb" class="subheading-anchor" aria-label="Permalink for this section"></a></h2>
       {{ partial "kicanvas.html" $ }}
 
       {{ with .Site.Params.ibom }}
-      <h2>Interactive BOM</h2>
+      <h2>Interactive BOM<span class="hx:absolute hx:-mt-20" id="interactive-bom"></span><a href="#interactive-bom" class="subheading-anchor" aria-label="Permalink for this section"></a></h2>
       <div class="viewer-wrap">
         {{ partial "fullscreen-btn.html" $ }}
         <iframe class="ibom-viewer" src="{{ $.Site.BaseURL }}{{ . }}" title="Interactive BOM"></iframe>
