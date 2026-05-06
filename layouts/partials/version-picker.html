@@ -7,25 +7,60 @@
     fetch(root + '/versions.json')
       .then(function(r) { return r.json(); })
       .then(function(versions) {
-        var sel = document.createElement('select');
-        sel.className = 'version-select';
-        sel.setAttribute('aria-label', 'Select version');
         var path = window.location.pathname.replace(baseURL.replace(/^https?:\/\/[^/]+/, ''), '');
-        sel.innerHTML = versions.map(function(v) {
+        var current = '';
+        versions.forEach(function(v) {
+          var tag = (typeof v === 'string') ? v : v.tag;
+          if (baseURL.indexOf('/' + tag + '/') !== -1) current = tag;
+        });
+
+        var wrap = document.createElement('div');
+        wrap.className = 'version-picker';
+
+        var btn = document.createElement('button');
+        btn.className = 'version-picker-btn';
+        btn.setAttribute('aria-label', 'Select version');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-haspopup', 'menu');
+        btn.type = 'button';
+        btn.textContent = current || 'latest';
+
+        var menu = document.createElement('ul');
+        menu.className = 'version-picker-menu';
+        menu.setAttribute('role', 'menu');
+        menu.innerHTML = versions.map(function(v) {
           var tag = (typeof v === 'string') ? v : v.tag;
           var label = tag;
           var url = (typeof v === 'object' && v.url) ? v.url : '';
           if (typeof v === 'object' && v.latest && tag !== 'latest') label += ' (latest)';
-          var selected = baseURL.indexOf('/' + tag + '/') !== -1 ? ' selected' : '';
-          return '<option value="' + tag + '"' + selected + (url ? ' data-url="' + url + '"' : '') + '>' + label + '</option>';
+          var active = (tag === current) ? ' version-picker-active' : '';
+          return '<li role="none"><button type="button" role="menuitemradio" aria-checked="' + (tag === current) + '" class="version-picker-item' + active + '" data-tag="' + tag + '"' + (url ? ' data-url="' + url + '"' : '') + '>' + label + '</button></li>';
         }).join('');
-        sel.addEventListener('change', function() {
-          var opt = sel.options[sel.selectedIndex];
-          var url = opt.dataset.url;
-          window.location.href = url ? url : root + '/' + sel.value + '/' + path;
+
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var open = wrap.classList.toggle('open');
+          btn.setAttribute('aria-expanded', open);
         });
-        var target = document.querySelector('.hextra-nav-container nav');
-        if (target) target.appendChild(sel);
+        menu.addEventListener('click', function(e) {
+          var item = e.target.closest('.version-picker-item');
+          if (!item) return;
+          var url = item.dataset.url;
+          window.location.href = url ? url : root + '/' + item.dataset.tag + '/' + path;
+        });
+        document.addEventListener('click', function() {
+          wrap.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+        });
+
+        wrap.appendChild(btn);
+        wrap.appendChild(menu);
+        var target = document.querySelector('.hextra-nav-container nav .hextra-hamburger-menu');
+        if (target) target.parentNode.insertBefore(wrap, target);
+        else {
+          var nav = document.querySelector('.hextra-nav-container nav');
+          if (nav) nav.appendChild(wrap);
+        }
       })
       .catch(function() {});
   });

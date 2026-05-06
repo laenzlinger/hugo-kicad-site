@@ -73,7 +73,7 @@ describe('Layout structure (all pages)', () => {
   });
 
   it('contains version picker script', () => {
-    expect(html).toContain('version-select');
+    expect(html).toContain('version-picker');
   });
 
   it('contains footer badges', () => {
@@ -101,8 +101,8 @@ describe('CSS output', () => {
   });
 
   it('version picker uses Hextra-matching colors', () => {
-    expect(css).toContain('.version-select');
-    expect(css).toContain('.dark .version-select');
+    expect(css).toContain('.version-picker-btn');
+    expect(css).toContain('.dark .version-picker-btn');
   });
 
   it('gallery images override prose margin inside .content', () => {
