@@ -2,6 +2,14 @@
 
 This guide covers the changes needed in your site's `hugo.yaml` when upgrading to the Hextra-based version of hugo-kicad-site.
 
+## Update the theme module
+
+Run this in your site directory to pull the latest version:
+
+```sh
+hugo mod get -u github.com/laenzlinger/hugo-kicad-site
+```
+
 ## Module import (no change)
 
 Your module import stays the same:
