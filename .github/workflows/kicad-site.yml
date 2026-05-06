@@ -125,6 +125,14 @@ jobs:
 
       # ── Assembly models ────────────────────────────────────
 
+      - name: Convert assembly STEP to GLB
+        if: inputs.assembly_dir != ''
+        run: |
+          SCRIPT="${{ inputs.assembly_dir }}/step2glb.py"
+          [ -f "$SCRIPT" ] || exit 0
+          pip install --break-system-packages -q trimesh numpy cascadio scipy > /dev/null 2>&1
+          python3 "$SCRIPT"
+
       - name: Copy assembly models
         if: inputs.assembly_dir != ''
         run: |
