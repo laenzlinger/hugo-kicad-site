@@ -112,6 +112,7 @@ The `call-partial` shortcode lets you embed theme components directly in Markdow
 {{< call-partial "kicanvas.html" >}}
 {{< call-partial "gallery.html" >}}
 {{< call-partial "ibom.html" >}}
+{{< call-partial "assembly.html" >}}
 ```
 
 Available partials:
@@ -121,6 +122,7 @@ Available partials:
 | `kicanvas.html` | Interactive KiCanvas schematic/PCB viewer |
 | `gallery.html` | 3D render image grid with lightbox |
 | `ibom.html` | Interactive BOM viewer with dark mode sync |
+| `assembly.html` | Interactive 3D model viewer (multiple models supported) |
 
 This allows fully custom page composition in pure Markdown. See the [Custom Composition](https://laenzlinger.github.io/hugo-kicad-site/latest/custom-composition/) demo page for a live example.
 

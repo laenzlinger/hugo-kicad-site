@@ -31,6 +31,10 @@ This lets you mix and match components freely, add your own content between them
 
 {{< call-partial "ibom.html" >}}
 
+## 3D Assembly
+
+{{< call-partial "assembly.html" >}}
+
 ---
 
 ## Why use this?
