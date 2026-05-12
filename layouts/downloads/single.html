@@ -10,6 +10,7 @@
       {{ $version := .Site.Params.version | default "main" }}
       {{ $isRelease := and (ne $version "main") (ne $version "latest") }}
       {{ if $isRelease }}
+        <h2>Downloads</h2>
         {{ partial "download-list.html" $ }}
         {{ with .Site.Params.repoURL }}
         <p>Additional artifacts (Gerbers, BOM, etc.) are attached to the GitHub release:</p>
