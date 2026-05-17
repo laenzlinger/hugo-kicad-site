@@ -25,6 +25,9 @@ Instead of fixed page types, you can compose pages freely using shortcodes:
 {{</* call-partial "gallery.html" */>}}
 {{</* call-partial "ibom.html" */>}}
 {{</* call-partial "assembly.html" */>}}
+{{</* call-partial "bom.html" */>}}
+{{</* call-partial "diffs.html" */>}}
+{{</* call-partial "download-list.html" */>}}
 ```
 
 See the [Custom Composition](/hugo-kicad-site/latest/custom-composition/) page for a live example.

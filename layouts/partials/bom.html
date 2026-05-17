@@ -1,0 +1,6 @@
+{{ with .Site.Params.bom }}
+<div class="viewer-wrap">
+  {{ partial "fullscreen-btn.html" $ }}
+  <iframe class="ibom-viewer" src="{{ $.Site.BaseURL }}{{ . }}" title="Bill of Materials"></iframe>
+</div>
+{{ end }}
