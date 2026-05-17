@@ -225,6 +225,12 @@ jobs:
           IBOM=$(find "${{ env.GEN_DIR }}" -name '*ibom*.html' -type f 2>/dev/null | head -1)
           echo "path=${IBOM:+${IBOM#${{ env.GEN_DIR }}/}}" >> "$GITHUB_OUTPUT"
 
+      - name: Discover BOM (HTML)
+        id: bom
+        run: |
+          BOM=$(find "${{ env.GEN_DIR }}" -name '*bom*.html' -not -name '*ibom*' -type f 2>/dev/null | head -1)
+          echo "path=${BOM:+${BOM#${{ env.GEN_DIR }}/}}" >> "$GITHUB_OUTPUT"
+
       # ── Hugo site build ────────────────────────────────────
 
       - name: Install Hugo and Go
@@ -284,6 +290,8 @@ jobs:
           # Append optional params
           IBOM="${{ steps.ibom.outputs.path }}"
           [ -n "$IBOM" ] && echo "  ibom: \"${IBOM}\"" >> "${{ env.SITE_DIR }}/config_override.yaml" || true
+          BOM="${{ steps.bom.outputs.path }}"
+          [ -n "$BOM" ] && echo "  bom: \"${BOM}\"" >> "${{ env.SITE_DIR }}/config_override.yaml" || true
           [ "$ASSEMBLY_MODELS" != "[]" ] && echo "  assemblyModels: ${ASSEMBLY_MODELS}" >> "${{ env.SITE_DIR }}/config_override.yaml" || true
 
       - name: Build Hugo site
