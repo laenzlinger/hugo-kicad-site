@@ -20,6 +20,8 @@
         {{ partial "release-card.html" (dict "href" (printf "%s/releases" .) "title" "All releases" "subtitle" "Download artifacts on GitHub →") }}
         {{ end }}
       {{ end }}
+      <h2>Schematic &amp; PCB Diff</h2>
+      <p>Visual diff against the previous release:</p>
       {{ partial "diffs.html" $ }}
       </div>
     </main>
