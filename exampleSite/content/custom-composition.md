@@ -14,6 +14,10 @@ Instead of using a fixed layout type like `board` or `assembly`, you can insert 
 {{</* call-partial "gallery.html" */>}}
 {{</* call-partial "ibom.html" */>}}
 {{</* call-partial "assembly.html" */>}}
+{{</* call-partial "bom.html" */>}}
+{{</* call-partial "diffs.html" */>}}
+{{</* call-partial "diffs-pdf.html" */>}}
+{{</* call-partial "download-list.html" */>}}
 ```
 
 This lets you mix and match components freely, add your own content between them, and control the order.
@@ -32,9 +36,25 @@ This lets you mix and match components freely, add your own content between them
 
 {{< call-partial "ibom.html" >}}
 
+## BOM (HTML)
+
+{{< call-partial "bom.html" >}}
+
 ## 3D Assembly
 
 {{< call-partial "assembly.html" >}}
+
+## Downloads
+
+{{< call-partial "download-list.html" >}}
+
+## Diffs
+
+{{< call-partial "diffs.html" >}}
+
+## Diffs (embedded PDF)
+
+{{< call-partial "diffs-pdf.html" >}}
 
 ---
 

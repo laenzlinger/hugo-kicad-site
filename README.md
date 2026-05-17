@@ -123,6 +123,10 @@ Available partials:
 | `gallery.html` | 3D render image grid with lightbox |
 | `ibom.html` | Interactive BOM viewer with dark mode sync |
 | `assembly.html` | Interactive 3D model viewer (multiple models supported) |
+| `bom.html` | Embedded BOM (HTML) viewer |
+| `diffs.html` | Schematic/PCB diff links |
+| `diffs-pdf.html` | Embedded PDF diff viewer with fullscreen |
+| `download-list.html` | Download links list |
 
 This allows fully custom page composition in pure Markdown. See the [Custom Composition](https://laenzlinger.github.io/hugo-kicad-site/latest/custom-composition/) demo page for a live example.
 

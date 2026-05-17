@@ -27,6 +27,7 @@ Instead of fixed page types, you can compose pages freely using shortcodes:
 {{</* call-partial "assembly.html" */>}}
 {{</* call-partial "bom.html" */>}}
 {{</* call-partial "diffs.html" */>}}
+{{</* call-partial "diffs-pdf.html" */>}}
 {{</* call-partial "download-list.html" */>}}
 ```
 
