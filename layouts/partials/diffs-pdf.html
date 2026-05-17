@@ -1,0 +1,14 @@
+{{- $diffs := .Site.Params.diffs -}}
+{{ with $diffs }}
+  <!-- Using an object to display the PDF -->
+  {{ range . }}
+  <h3>{{ .name }}</h3>
+  <div class="viewer-wrap">
+    {{ partial "fullscreen-btn.html" $ }}
+    <object class="pdf-viewer" data="{{ $.Site.BaseURL }}{{ .path }}" type="application/pdf">
+      <p>Your browser doesn't support embedded PDFs. <a href="{{ $.Site.BaseURL }}{{ .path }}">Click here to download "{{ .name }}".</a></p>
+    </object>
+  </div>
+  <p>
+  {{ end }}
+{{ end }}

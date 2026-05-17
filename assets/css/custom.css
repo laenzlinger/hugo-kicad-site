@@ -199,6 +199,17 @@ kicanvas-embed {
 .viewer-wrap:-webkit-full-screen .ibom-viewer,
 .viewer-wrap--fullscreen .ibom-viewer { width: 100% !important; height: 100% !important; border: none; border-radius: 0; }
 
+/* Default state for the PDF viewer (adjust height/border as needed) */
+.pdf-viewer {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.viewer-wrap:fullscreen .pdf-viewer,
+.viewer-wrap:-webkit-full-screen .pdf-viewer,
+.viewer-wrap--fullscreen .pdf-viewer { width: 100% !important; height: 100% !important; border: none; border-radius: 0; }
+
 /* ── Tables ── */
 .content table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
 .content th, .content td { padding: 0.5rem 0.75rem; border: 1px solid var(--kicad-border); text-align: left; }
