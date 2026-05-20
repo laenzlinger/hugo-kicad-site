@@ -1,0 +1,6 @@
+{{ with .Site.Params.kiri }}
+<div class="viewer-wrap">
+  {{ partial "fullscreen-btn.html" $ }}
+  <iframe class="ibom-viewer" src="{{ $.Site.BaseURL }}{{ . }}" title="KiCad Revision Inspector (KiRi)"></iframe>
+</div>
+{{ end }}
