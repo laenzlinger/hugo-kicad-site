@@ -3,4 +3,7 @@
   {{ partial "fullscreen-btn.html" $ }}
   <iframe class="ibom-viewer" src="{{ $.Site.BaseURL }}{{ . }}" title="KiCad Revision Inspector (KiRi)"></iframe>
 </div>
+{{ else }}
+  <p>
+  {{ .Site.Params.kiriMissing | safeHTML }}
 {{ end }}
