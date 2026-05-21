@@ -18,6 +18,7 @@ Instead of using a fixed layout type like `board` or `assembly`, you can insert 
 {{</* call-partial "diffs.html" */>}}
 {{</* call-partial "diffs-pdf.html" */>}}
 {{</* call-partial "download-list.html" */>}}
+{{</* call-partial "kiri.html" */>}}
 ```
 
 This lets you mix and match components freely, add your own content between them, and control the order.
