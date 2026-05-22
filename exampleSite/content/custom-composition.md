@@ -14,6 +14,7 @@ Instead of using a fixed layout type like `board` or `assembly`, you can insert 
 {{</* call-partial "gallery.html" */>}}
 {{</* call-partial "ibom.html" */>}}
 {{</* call-partial "assembly.html" */>}}
+{{</* call-partial "assembly-autoload.html" */>}}
 {{</* call-partial "bom.html" */>}}
 {{</* call-partial "diffs.html" */>}}
 {{</* call-partial "diffs-pdf.html" */>}}
